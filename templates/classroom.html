@@ -16,7 +16,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 800px;
       margin: 0 auto;
       background: white;
       padding: 20px;
@@ -378,41 +378,45 @@
           <i class="fas fa-times"></i> Clear Filters
         </button>
       </div>
+<div class="filter-groups" style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 500; line-height: 1.4;">
+        
+  <!-- Subject Filter -->
+  <div class="filter-group" style="margin-bottom: 15px;">
+    <label style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 600;">Subject:</label>
+    
+    <div class="filter-options" id="subjectFilters" style="margin-top: 8px;">
+      <button class="filter-btn active" data-filter="subject" data-value="all" style="font-family: Arial, sans-serif;">All Subjects</button>
+      <button class="filter-btn" data-filter="subject" data-value="mathematics" style="font-family: Arial, sans-serif;">Mathematics</button>
+      <button class="filter-btn" data-filter="subject" data-value="science" style="font-family: Arial, sans-serif;">Science</button>
+      <button class="filter-btn" data-filter="subject" data-value="language" style="font-family: Arial, sans-serif;">Language</button>
+      <button class="filter-btn" data-filter="subject" data-value="Arts and Music" style="font-family: Arial, sans-serif;">Arts and Music</button>
+      <button class="filter-btn" data-filter="subject" data-value="Social Studies" style="font-family: Arial, sans-serif;">Social Studies</button>
+      <button class="filter-btn" data-filter="subject" data-value="Reading and Writing" style="font-family: Arial, sans-serif;">Reading and Writing</button>
+      <button class="filter-btn" data-filter="subject" data-value="Physical Education" style="font-family: Arial, sans-serif;">Physical Education</button>
+      <button class="filter-btn" data-filter="subject" data-value="Health and Hygiene" style="font-family: Arial, sans-serif;">Health and Hygiene</button>
+      <button class="filter-btn" data-filter="subject" data-value="Environmental Studies" style="font-family: Arial, sans-serif;">Environmental Studies</button>
+      <button class="filter-btn" data-filter="subject" data-value="Technology and Computing" style="font-family: Arial, sans-serif;">Technology and Computing</button>
+    </div>
+  </div>
 
-      <div class="filter-groups">
-        <!-- Subject Filter -->
-        <div class="filter-group">
-          <label>Subject:</label>
-          <div class="filter-options" id="subjectFilters">
-            <button class="filter-btn active" data-filter="subject" data-value="all">All Subjects</button>
-            <button class="filter-btn" data-filter="subject" data-value="mathematics">Mathematics</button>
-            <button class="filter-btn" data-filter="subject" data-value="science">Science</button>
-            <button class="filter-btn" data-filter="subject" data-value="language">Language</button>
-            <button class="filter-btn" data-filter="subject" data-value="Arts and Music">Arts and Music</button>
-            <button class="filter-btn" data-filter="subject" data-value="Social Studies">Social Studies</button>
-            <button class="filter-btn" data-filter="subject" data-value="Reading and Writing">Reading and Writing</button>
-            <button class="filter-btn" data-filter="subject" data-value="Physical Education">Physical Education</button>
-            <button class="filter-btn" data-filter="subject" data-value="Health and Hygiene">Health and Hygiene</button>
-            <button class="filter-btn" data-filter="subject" data-value="Environmental Studies">Environmental Studies</button>
-            <button class="filter-btn" data-filter="subject" data-value="Technology and Computing">Technology and Computing</button>
-          </div>
-        </div>
+  <!-- Grade Level Filter -->
+  <div class="filter-group">
+    <label style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 600;">Grade Level:</label>
 
-        <!-- Grade Level Filter -->
-        <div class="filter-group">
-          <label>Grade Level:</label>
-          <div class="filter-options" id="gradeFilters">
-            <button class="filter-btn active" data-filter="grade" data-value="all">All Grades</button>
-            <button class="filter-btn" data-filter="grade" data-value="pre_k">Pre-K</button>
-            <button class="filter-btn" data-filter="grade" data-value="kindergarten">Kindergarten</button>
-            <button class="filter-btn" data-filter="grade" data-value="grade_1">Grade 1</button>
-            <button class="filter-btn" data-filter="grade" data-value="grade_2">Grade 2</button>
-            <button class="filter-btn" data-filter="grade" data-value="grade_3">Grade 3</button>
-            <button class="filter-btn" data-filter="grade" data-value="grade_4">Grade 4</button>
-            <button class="filter-btn" data-filter="grade" data-value="grade_5">Grade 5</button>
-          </div>
-        </div>
-      </div>
+    <div class="filter-options" id="gradeFilters" style="margin-top: 8px;">
+      <button class="filter-btn active" data-filter="grade" data-value="all" style="font-family: Arial, sans-serif;">All Grades</button>
+      <button class="filter-btn" data-filter="grade" data-value="pre_k" style="font-family: Arial, sans-serif;">Pre-K</button>
+      <button class="filter-btn" data-filter="grade" data-value="kindergarten" style="font-family: Arial, sans-serif;">Kindergarten</button>
+      <button class="filter-btn" data-filter="grade" data-value="grade_1" style="font-family: Arial, sans-serif;">Grade 1</button>
+      <button class="filter-btn" data-filter="grade" data-value="grade_2" style="font-family: Arial, sans-serif;">Grade 2</button>
+      <button class="filter-btn" data-filter="grade" data-value="grade_3" style="font-family: Arial, sans-serif;">Grade 3</button>
+      <button class="filter-btn" data-filter="grade" data-value="grade_4" style="font-family: Arial, sans-serif;">Grade 4</button>
+      <button class="filter-btn" data-filter="grade" data-value="grade_5" style="font-family: Arial, sans-serif;">Grade 5</button>
+    </div>
+  </div>
+
+</div>
+
 
       <div class="results-count" id="resultsCount">
         Showing all {{ materials|length }} materials

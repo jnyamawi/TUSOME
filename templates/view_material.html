@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View {{ material.title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f8fc;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0056b3;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    h1 { margin: 0; font-size: 1.5em; }
+    a { color: white; text-decoration: none; margin-left: 15px; }
+    a:hover { text-decoration: underline; }
+
+    .material-header {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border-left: 4px solid #0056b3;
+    }
+
+    .material-title {
+      color: #0056b3;
+      margin: 0 0 10px 0;
+      font-size: 1.8em;
+    }
+
+    .material-meta {
+      display: flex;
+      gap: 20px;
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 15px;
+    }
+
+    .material-description {
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: #0056b3;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #004494;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .viewer-container {
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #f8f9fa;
+      min-height: 600px;
+    }
+
+    .pdf-viewer, .image-viewer, .video-viewer {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+
+    .image-viewer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .image-viewer img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .unsupported-file {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .unsupported-file i {
+      font-size: 4em;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    .file-info {
+      background: #e9ecef;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .file-info h4 {
+      margin: 0 0 10px 0;
+      color: #495057;
+    }
+
+    .file-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .file-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .file-detail:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: bold;
+      color: #495057;
+    }
+
+    .detail-value {
+      color: #6c757d;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .material-meta {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .viewer-container {
+        min-height: 400px;
+      }
+
+      .pdf-viewer, .image-viewer, .video-viewer {
+        height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📄 Document Viewer</h1>
+      <nav>
+        <a href="{{ url_for('classroom') }}">Back to Classroom</a>
+        <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+    </header>
+
+    <div class="material-header">
+      <h2 class="material-title">{{ material.title }}</h2>
+      <div class="material-meta">
+        <span><i class="fas fa-book"></i> {{ material.category|replace('_', ' ')|title }}</span>
+        <span><i class="fas fa-graduation-cap"></i> 
+          {% if material.grade_level == 'pre_k' %}Pre-K (3-4)
+          {% elif material.grade_level == 'kindergarten' %}Kindergarten (5-6)
+          {% elif material.grade_level == 'grade_1' %}Grade 1 (6-7)
+          {% elif material.grade_level == 'grade_2' %}Grade 2 (7-8)
+          {% elif material.grade_level == 'grade_3' %}Grade 3 (8-9)
+          {% elif material.grade_level == 'grade_4' %}Grade 4 (9-10)
+          {% elif material.grade_level == 'grade_5' %}Grade 5 (10-11)
+          {% else %}All Grades
+          {% endif %}
+        </span>
+        <span><i class="fas fa-file"></i> {{ material.file_type|upper }}</span>
+        <span><i class="fas fa-download"></i> {{ material.download_count }} downloads</span>
+      </div>
+      {% if material.description %}
+        <div class="material-description">
+          {{ material.description }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="action-buttons">
+      <a href="{{ url_for('download_classroom_material', material_id=material._id) }}" class="btn btn-primary">
+        <i class="fas fa-download"></i> Download Document
+      </a>
+      <a href="{{ url_for('classroom') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Classroom
+      </a>
+      <button onclick="window.print()" class="btn btn-success">
+        <i class="fas fa-print"></i> Print
+      </button>
+    </div>
+
+    <div class="viewer-container">
+      {% if file_type == 'pdf' %}
+        <iframe src="{{ file_url }}#toolbar=0&navpanes=0" class="pdf-viewer" title="{{ material.title }}">
+          Your browser does not support PDFs. <a href="{{ file_url }}">Download the PDF</a>.
+        </iframe>
+      {% elif file_type in ['jpg', 'jpeg', 'png'] %}
+        <div class="image-viewer">
+          <img src="{{ file_url }}" alt="{{ material.title }}" onerror="this.style.display='none'">
+        </div>
+      {% elif file_type == 'mp4' %}
+        <video controls class="video-viewer">
+          <source src="{{ file_url }}" type="video/mp4">
+          Your browser does not support the video tag. <a href="{{ file_url }}">Download the video</a>.
+        </video>
+      {% else %}
+        <div class="unsupported-file">
+          <i class="fas fa-file"></i>
+          <h3>File Type Not Supported for Preview</h3>
+          <p>This file type cannot be displayed in the browser. Please download it to view the content.</p>
+          <a href="{{ url_for('download_classroom_material', material_id=material._id) }}" class="btn btn-primary">
+            <i class="fas fa-download"></i> Download File
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="file-info">
+      <h4>File Information</h4>
+      <div class="file-details">
+        <div class="file-detail">
+          <span class="detail-label">File Name:</span>
+          <span class="detail-value">{{ material.original_filename }}</span>
+        </div>
+        <div class="file-detail">
+          <span class="detail-label">File Type:</span>
+          <span class="detail-value">{{ material.file_type|upper }}</span>
+        </div>
+        <div class="file-detail">
+          <span class="detail-label">File Size:</span>
+          <span class="detail-value">
+            {% if material.file_size %}
+              {{ (material.file_size / 1024 / 1024)|round(2) }} MB
+            {% else %}
+              Unknown
+            {% endif %}
+          </span>
+        </div>
+        <div class="file-detail">
+          <span class="detail-label">Uploaded:</span>
+          <span class="detail-value">
+            {% if material.uploaded_at %}
+              {{ material.uploaded_at.strftime('%Y-%m-%d %H:%M') }}
+            {% else %}
+              Unknown
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Auto-resize viewer based on content
+    function resizeViewer() {
+      const viewer = document.querySelector('.viewer-container');
+      const content = document.querySelector('.pdf-viewer, .image-viewer, .video-viewer');
+      if (content) {
+        viewer.style.minHeight = 'auto';
+      }
+    }
+
+    // Initialize on load
+    window.addEventListener('load', resizeViewer);
+    
+    // Handle PDF loading
+    window.addEventListener('message', function(event) {
+      if (event.data.type === 'PDF_LOADED') {
+        resizeViewer();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ content.title }} - View Material</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #007bff;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p.description {
+      text-align: center;
+      color: #555;
+      font-size: 1.05rem;
+    }
+
+    .file-view {
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    iframe, video, img, pre {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      background: #fafafa;
+    }
+
+    iframe {
+      height: 600px;
+    }
+
+    pre {
+      text-align: left;
+      padding: 20px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      background: #f8f9fa;
+    }
+
+    .actions {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin: 5px;
+      font-weight: bold;
+      transition: background 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-back {
+      background-color: #6c757d;
+    }
+
+    .btn-back:hover {
+      background-color: #5a6268;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>{{ content.title }}</h1>
+    <p class="description">{{ content.description }}</p>
+
+    {% if file_url %}
+      <div class="file-view">
+        {% set ext = content.filename.split('.')[-1].lower() %}
+        
+        {% if ext in ['pdf'] %}
+          <iframe src="{{ file_url }}" frameborder="0"></iframe>
+        {% elif ext in ['jpg', 'jpeg', 'png', 'gif'] %}
+          <img src="{{ file_url }}" alt="{{ content.title }}">
+        {% elif ext in ['mp4', 'webm', 'ogg'] %}
+          <video controls>
+            <source src="{{ file_url }}" type="video/{{ ext }}">
+            Your browser does not support video playback.
+          </video>
+        {% elif ext in ['txt', 'md', 'csv'] %}
+          <iframe src="{{ file_url }}" frameborder="0" style="height:600px;"></iframe>
+        {% else %}
+          <p><a href="{{ file_url }}" target="_blank">📂 View or Download File</a></p>
+        {% endif %}
+      </div>
+
+      <div class="actions">
+        <a href="{{ file_url }}" download class="btn">⬇️ Download</a>
+        {% if current_user.role == 'learner' %}
+         <a href="{{ url_for('learner_dashboard') }}" class="btn btn-back">← Back to Dashboard</a>
+        {% else %}
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-back">← Back to Dashboard</a>
+{% endif %}
+      </div>
+    {% else %}
+      <p style="text-align:center; margin-top:20px;"><em>No file uploaded for this content.</em></p>
+      <div class="actions">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-back">← Back to Dashboard</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <footer>
+    <p>© 2025 KidsLearn e-Learning | Empowering Children 4–10 🌱</p>
+  </footer>
+</body>
+</html>

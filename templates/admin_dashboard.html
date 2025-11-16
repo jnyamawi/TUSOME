@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: gray;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .admin-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border-left: 4px solid #007bff;
+    }
+
+    .admin-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .admin-card h3 {
+      color: #007bff;
+      margin-top: 0;
+      font-size: 1.3rem;
+    }
+
+    .admin-card p {
+      color: #555;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .btn-container {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.2s ease;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    .btn-info {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background-color: #138496;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .content-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .content-card h3 {
+      color: #007bff;
+      margin-top: 0;
+    }
+
+    .content-card p {
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    .buttons {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-view {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+    .btn-view:hover {
+      background-color: #138496;
+    }
+
+    .btn-edit {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    .btn-edit:hover {
+      background-color: #e0a800;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+
+    .empty-message {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #777;
+      margin-top: 40px;
+    }
+
+    form {
+      display: inline;
+      width: 100%;
+    }
+    
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .dashboard-header h2 {
+      color: #333;
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+    
+    .dashboard-header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">Home</a> |
+      <!--<a href="{{ url_for('upload_content') }}">📤 Upload Content</a> |-->
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="dashboard-header">
+      <h2>Admin Management Center</h2>
+      <p>Manage all aspects of your e-learning platform</p>
+    </div>
+
+    <!-- Admin Management Cards -->
+    <div class="admin-grid">
+      <!-- Content Management Card 
+      <div class="admin-card">
+        <h3>📚 Content Management</h3>
+        <p>Upload and manage educational content for learners</p>
+        <div class="btn-container">
+          <a href="{{ url_for('upload_content') }}" class="btn btn-primary">Upload Content</a>
+          <a href="{{ url_for('admin_dashboard') }}" class="btn btn-info">View All Content</a>
+        </div>
+      </div>
+      -->
+
+      <!-- Classroom Materials Card -->
+      <div class="admin-card">
+        <h3>Classroom Materials</h3>
+        <p>Manage study materials and resources for learners</p>
+        <div class="btn-container">
+          <a href="{{ url_for('admin_classroom_materials') }}" class="btn btn-info">Manage Materials</a>
+          <a href="{{ url_for('upload_classroom_material') }}" class="btn btn-primary">Upload Material</a>
+        </div>
+      </div>
+
+      <!-- Video Management Card -->
+      <div class="admin-card">
+        <h3>Video Management</h3>
+        <p>Manage educational videos and YouTube content</p>
+        <div class="btn-container">
+          <a href="{{ url_for('admin_video_management') }}" class="btn btn-info">Manage Videos</a>
+          <a href="{{ url_for('add_video') }}" class="btn btn-primary">Add New Video</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Existing Content Section
+    <h2>📚 Uploaded Educational Contents</h2>
+
+    {% if contents %}
+      <div class="content-grid">
+        {% for c in contents %}
+          <div class="content-card">
+            <h3>{{ c.title }}</h3>
+            <p>{{ c.description[:120] }}{% if c.description|length > 120 %}...{% endif %}</p>
+
+            <div class="buttons">
+              <a href="{{ url_for('view_content', content_id=c._id) }}" class="btn btn-view">👀 Preview</a>
+              <a href="{{ url_for('edit_content', content_id=c._id) }}" class="btn btn-edit">✏️ Edit</a>
+              <form action="{{ url_for('delete_content', content_id=c._id) }}" method="post" onsubmit="return confirm('Delete this item?');">
+                <button type="submit" class="btn btn-delete">🗑️ Delete</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-message">No content uploaded yet. <a href="{{ url_for('upload_content') }}">Upload your first content</a>.</p>
+    {% endif %}
+     -->
+  </main>
+  
+</body>
+</html>

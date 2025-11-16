@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Management - Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f8fc;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0056b3;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        h1 { margin: 0; font-size: 1.5em; }
+        a { color: white; text-decoration: none; margin-left: 15px; }
+        a:hover { text-decoration: underline; }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .page-header h2 {
+            color: #0056b3;
+            margin: 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background: #218838;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #0056b3;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .videos-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .videos-table th,
+        .videos-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .videos-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .videos-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .video-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .video-thumb {
+            width: 120px;
+            height: 68px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .video-details {
+            flex: 1;
+        }
+
+        .video-title {
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 5px;
+        }
+
+        .video-description {
+            color: #6c757d;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .category-badge {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            color: #495057;
+        }
+
+        .level-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .level-beginner { background: #d4edda; color: #155724; }
+        .level-intermediate { background: #fff3cd; color: #856404; }
+        .level-advanced { background: #f8d7da; color: #721c24; }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-active { background: #d4edda; color: #155724; }
+        .status-inactive { background: #f8d7da; color: #721c24; }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        .filter-select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            background: white;
+        }
+
+        /* Flash message classes (avoid inline Jinja in style attribute) */
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .videos-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .video-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Video Management</h1>
+            <nav>
+                <a href="{{ url_for('admin_dashboard') }}"> Dashboard</a>
+                <a href="{{ url_for('admin_classroom_materials') }}"> Classroom</a>
+                <a href="{{ url_for('admin_video_management') }}"> Videos</a>
+                <a href="{{ url_for('index') }}"> Home</a>
+                <a href="{{ url_for('logout') }}"> Logout</a>
+            </nav>
+        </header>
+
+        <div class="page-header">
+            <h2>Educational Videos Management</h2>
+            <a href="{{ url_for('add_video') }}" class="btn">
+                <i class="fas fa-plus"></i> Add New Video
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ 'alert-success' if category == 'success' else 'alert-danger' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ videos|length }}</div>
+                <div class="stat-label">Total Videos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ videos|selectattr('is_active', 'equalto', true)|list|length }}</div>
+                <div class="stat-label">Active Videos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ videos|selectattr('category', 'equalto', 'Programming')|list|length }}</div>
+                <div class="stat-label">Programming Videos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ videos|selectattr('difficulty_level', 'equalto', 'Beginner')|list|length }}</div>
+                <div class="stat-label">Beginner Level</div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-filter">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search videos by title or description...">
+            </div>
+            <div class="filter-group">
+                <select id="categoryFilter" class="filter-select">
+                    <option value="all">All Categories</option>
+                    <option value="Kiswahili">Kiswahili</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Science">Science</option>
+                    <option value="Language">Language</option>
+                    <option value="Reading and Writing">Reading and Writing</option>
+                    <option value="Arts and Music">Arts and Music</option>
+                    <option value="Social Studies">Social Studies</option>
+                    <option value="History">History</option>
+                    <option value="Geography">Geography</option>
+                    <option value="Physical Education">Physical Education</option>
+                    <option value="Stories">Stories</option>
+
+                </select>
+            </div>
+            <div class="filter-group">
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+
+        {% if videos %}
+        <table class="videos-table">
+            <thead>
+                <tr>
+                    <th>Video</th>
+                    <th>Category</th>
+                    <th>Level</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Added</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for video in videos %}
+                <tr class="video-row" 
+                    data-title="{{ video.title.lower() }}" 
+                    data-description="{{ video.description.lower() }}"
+                    data-category="{{ video.category }}"
+                    data-status="{{ 'active' if video.is_active else 'inactive' }}">
+                    <td>
+                        <div class="video-info">
+                            <img src="{{ video.thumbnail_url }}" 
+                                 alt="{{ video.title }}" 
+                                 class="video-thumb"
+                                 onerror="this.src='https://via.placeholder.com/120x68/0056b3/ffffff?text=No+Thumbnail'">
+                            <div class="video-details">
+                                <div class="video-title">{{ video.title }}</div>
+                                <div class="video-description">
+                                    {{ video.description|truncate(100) }}
+                                </div>
+                                <div style="margin-top: 5px; font-size: 0.8em; color: #888;">
+                                    <i class="fas fa-eye"></i> {{ video.view_count or 0 }} views
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="category-badge">{{ video.category }}</span>
+                    </td>
+                    <td>
+                        <span class="level-badge level-{{ video.difficulty_level|lower }}">
+                            {{ video.difficulty_level }}
+                        </span>
+                    </td>
+                    <td>{{ video.duration or 'N/A' }}</td>
+                    <td>
+                        <span class="status-badge status-{{ 'active' if video.is_active else 'inactive' }}">
+                            {{ 'Active' if video.is_active else 'Inactive' }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if video.created_at %}
+                            {{ video.created_at.strftime('%Y-%m-%d') }}
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <a href="{{ url_for('edit_video', video_id=video._id) }}" 
+                               class="action-btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form method="POST" 
+                                  action="{{ url_for('toggle_video', video_id=video._id) }}" 
+                                  style="display: inline;">
+                                <button type="submit" 
+                                        class="action-btn btn-warning"
+                                        data-confirm="Are you sure you want to {{ 'deactivate' if video.is_active else 'activate' }} this video?">
+                                     <i class="fas fa-{{ 'eye-slash' if video.is_active else 'eye' }}"></i>
+                                     {{ 'Deactivate' if video.is_active else 'Activate' }}
+                                 </button>
+                             </form>
+                             <form method="POST" 
+                                   action="{{ url_for('delete_video', video_id=video._id) }}" 
+                                   style="display: inline;">
+                                <button type="submit" 
+                                        class="action-btn btn-danger"
+                                        data-confirm="Are you sure you want to delete this video? This action cannot be undone.">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                             </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-film"></i>
+            <h3>No Videos Added Yet</h3>
+            <p>Start building your educational video library by adding the first video.</p>
+            <a href="{{ url_for('add_video') }}" class="btn" style="margin-top: 20px;">
+                <i class="fas fa-plus"></i> Add Your First Video
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const statusFilter = document.getElementById('statusFilter');
+
+            function filterVideos() {
+                const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+                const category = categoryFilter ? categoryFilter.value : 'all';
+                const status = statusFilter ? statusFilter.value : 'all';
+                const videoRows = document.querySelectorAll('.video-row');
+
+                videoRows.forEach(row => {
+                    const title = row.getAttribute('data-title') || '';
+                    const description = row.getAttribute('data-description') || '';
+                    const rowCategory = row.getAttribute('data-category') || '';
+                    const rowStatus = row.getAttribute('data-status') || '';
+
+                    const matchesSearch = !searchTerm || title.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesCategory = category === 'all' || rowCategory === category;
+                    const matchesStatus = status === 'all' || rowStatus === status;
+
+                    row.style.display = (matchesSearch && matchesCategory && matchesStatus) ? '' : 'none';
+                });
+            }
+
+            if (searchInput) searchInput.addEventListener('input', filterVideos);
+            if (categoryFilter) categoryFilter.addEventListener('change', filterVideos);
+            if (statusFilter) statusFilter.addEventListener('change', filterVideos);
+
+            // delegated confirmation for forms with data-confirm on submit buttons
+            document.addEventListener('submit', function (e) {
+                const form = e.target;
+                if (!(form instanceof HTMLFormElement)) return;
+                // modern browsers provide e.submitter; fallback to first matching button
+                const submitter = e.submitter || form.querySelector('button[type="submit"][data-confirm]');
+                if (!submitter) return;
+                const msg = submitter.getAttribute('data-confirm');
+                if (msg && !confirm(msg)) {
+                    e.preventDefault();
+                }
+            }, true);
+        });
+    </script>
+</body>
+</html>

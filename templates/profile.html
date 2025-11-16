@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Me - Learner Profile</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f8fc;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0056b3;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    h1 { margin: 0; font-size: 1.5em; }
+    a { color: white; text-decoration: none; margin-left: 15px; }
+    a:hover { text-decoration: underline; }
+
+    .profile-content {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 30px;
+    }
+
+    /* PROFILE SIDEBAR */
+    .profile-sidebar {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .user-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: white;
+      font-size: 3rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .user-info h2 {
+      color: #0056b3;
+      margin-bottom: 5px;
+      font-size: 1.5em;
+    }
+
+    .user-email {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 1em;
+    }
+
+    .user-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .stat-item {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .stat-number {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #0056b3;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.8em;
+    }
+
+    /* PROFILE MAIN CONTENT */
+    .profile-main {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .section-header h3 {
+      color: #0056b3;
+      margin: 0;
+      font-size: 1.3em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .view-all {
+      color: #0056b3;
+      text-decoration: none;
+      font-size: 0.9em;
+      font-weight: 500;
+    }
+
+    .view-all:hover {
+      text-decoration: underline;
+    }
+
+    /* MATERIALS GRID */
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .material-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      border-left: 4px solid #0056b3;
+      transition: transform 0.3s ease;
+    }
+
+    .material-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .material-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .material-title {
+      font-weight: bold;
+      color: #0056b3;
+      margin: 0;
+      font-size: 1em;
+    }
+
+    .material-badges {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: flex-end;
+    }
+
+    .material-category {
+      background: #e9ecef;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.7em;
+      color: #495057;
+    }
+
+    .material-grade {
+      background: #d4edda;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.7em;
+      color: #155724;
+    }
+
+    .material-description {
+      color: #666;
+      font-size: 0.85em;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .material-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8em;
+      color: #888;
+    }
+
+    .material-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8em;
+      flex: 1;
+      min-width: 100px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: #0056b3;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #004494;
+    }
+
+    .btn-secondary {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #218838;
+    }
+
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #138496;
+    }
+
+    .btn-disabled {
+      background: #6c757d;
+      color: white;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    /* EMPTY STATES */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+
+    .empty-state i {
+      font-size: 3em;
+      margin-bottom: 15px;
+      color: #ccc;
+    }
+
+    .empty-state p {
+      margin: 0;
+      font-size: 0.9em;
+    }
+
+    /* PROGRESS SECTION */
+    .progress-section {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+
+    .progress-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .progress-item {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .progress-number {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #0056b3;
+      margin-bottom: 5px;
+    }
+
+    .progress-label {
+      color: #666;
+      font-size: 0.85em;
+    }
+
+    /* RECENT ACTIVITY */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #28a745;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #0056b3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2em;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: bold;
+      color: #0056b3;
+      margin-bottom: 5px;
+    }
+
+    .activity-desc {
+      color: #666;
+      font-size: 0.85em;
+      margin-bottom: 5px;
+    }
+
+    .activity-time {
+      color: #888;
+      font-size: 0.8em;
+    }
+
+    .file-icon {
+      font-size: 1.5em;
+      margin-bottom: 8px;
+      color: #0056b3;
+    }
+
+    .file-type-badge {
+      background: #007bff;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 0.6em;
+      font-weight: bold;
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+
+      .profile-content {
+        grid-template-columns: 1fr;
+      }
+
+      .materials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .user-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .progress-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .material-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        min-width: auto;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>About Me</h1>
+      <nav>
+        <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('classroom') }}">Classroom</a>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+    </header>
+
+    <div class="profile-content">
+      <!-- PROFILE SIDEBAR -->
+      <div class="profile-sidebar">
+        <div class="user-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        
+        <div class="user-info">
+          <h2>{{ current_user.username }}</h2>
+          <div class="user-email">{{ current_user.email }}</div>
+          <p style="color: #666; font-size: 0.9em; margin-bottom: 20px;">Active Learner</p>
+        </div>
+
+        <div class="user-stats">
+          <div class="stat-item">
+            <div class="stat-number">{{ downloaded_count }}</div>
+            <div class="stat-label">Downloads</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ completed_count }}</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ recent_count }}</div>
+            <div class="stat-label">Recent</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ total_materials }}</div>
+            <div class="stat-label">Total</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE MAIN CONTENT -->
+      <div class="profile-main">
+        <!-- LEARNING PROGRESS -->
+        <div class="section progress-section">
+          <div class="section-header">
+            <h3><i class="fas fa-chart-line"></i> Learning Progress</h3>
+          </div>
+          <div class="progress-stats">
+            <div class="progress-item">
+              <div class="progress-number">{{ progress_percentage }}%</div>
+              <div class="progress-label">Overall Progress</div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-number">{{ learning_hours }}</div>
+              <div class="progress-label">Learning Hours</div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-number">{{ current_streak }}</div>
+              <div class="progress-label">Day Streak</div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-number">{{ certificates_count }}</div>
+              <div class="progress-label">Certificates</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENTLY ACCESSED MATERIALS -->
+        <div class="section">
+          <div class="section-header">
+            <h3><i class="fas fa-clock"></i> Recently Accessed</h3>
+            <a href="{{ url_for('classroom') }}" class="view-all">View All</a>
+          </div>
+
+          {% if recent_materials %}
+            <div class="materials-grid">
+              {% for material in recent_materials %}
+                <div class="material-card">
+                  <div class="file-icon">
+                    {% if material.file_type == 'pdf' %}
+                      <i class="fas fa-file-pdf"></i>
+                    {% elif material.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                      <i class="fas fa-file-image"></i>
+                    {% elif material.file_type in ['mp4', 'avi', 'mov'] %}
+                      <i class="fas fa-file-video"></i>
+                    {% elif material.file_type in ['doc', 'docx'] %}
+                      <i class="fas fa-file-word"></i>
+                    {% else %}
+                      <i class="fas fa-file"></i>
+                    {% endif %}
+                  </div>
+
+                  <div class="material-header">
+                    <h4 class="material-title">{{ material.title }}</h4>
+                    <div class="material-badges">
+                      <span class="material-category">{{ material.category|replace('_', ' ')|title }}</span>
+                      <span class="material-grade">
+                        {% if material.grade_level == 'pre_k' %}Pre-K
+                        {% elif material.grade_level == 'kindergarten' %}K
+                        {% elif material.grade_level == 'grade_1' %}G1
+                        {% elif material.grade_level == 'grade_2' %}G2
+                        {% elif material.grade_level == 'grade_3' %}G3
+                        {% elif material.grade_level == 'grade_4' %}G4
+                        {% elif material.grade_level == 'grade_5' %}G5
+                        {% else %}All
+                        {% endif %}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="material-description">
+                    {{ material.description or 'No description available.' }}
+                  </div>
+                  
+                  <div class="material-meta">
+                    <span><i class="fas fa-file"></i> <span class="file-type-badge">{{ material.file_type|upper }}</span></span>
+                    <span><i class="fas fa-calendar"></i> Recently</span>
+                  </div>
+                  
+                  <div class="material-actions">
+                    <a href="{{ url_for('download_classroom_material', material_id=material._id) }}" class="btn btn-primary">
+                      <i class="fas fa-download"></i> Download
+                    </a>
+                    
+                    {% if material.file_type in ['pdf', 'jpg', 'jpeg', 'png', 'mp4'] %}
+                      <a href="{{ url_for('view_classroom_material', material_id=material._id) }}" class="btn btn-secondary" target="_blank">
+                        <i class="fas fa-eye"></i> View
+                      </a>
+                    {% else %}
+                      <span class="btn btn-disabled">
+                        <i class="fas fa-eye-slash"></i> View Only
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="empty-state">
+              <i class="fas fa-clock"></i>
+              <p>No recently accessed materials yet.</p>
+              <a href="{{ url_for('classroom') }}" class="btn btn-primary" style="margin-top: 10px;">
+                <i class="fas fa-book-open"></i> Browse Materials
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- DOWNLOADED MATERIALS -->
+        <div class="section">
+          <div class="section-header">
+            <h3><i class="fas fa-download"></i> Downloaded Materials</h3>
+            <a href="{{ url_for('classroom') }}" class="view-all">View All</a>
+          </div>
+
+          {% if downloaded_materials %}
+            <div class="materials-grid">
+              {% for material in downloaded_materials %}
+                <div class="material-card">
+                  <div class="file-icon">
+                    {% if material.file_type == 'pdf' %}
+                      <i class="fas fa-file-pdf"></i>
+                    {% elif material.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                      <i class="fas fa-file-image"></i>
+                    {% elif material.file_type in ['mp4', 'avi', 'mov'] %}
+                      <i class="fas fa-file-video"></i>
+                    {% elif material.file_type in ['doc', 'docx'] %}
+                      <i class="fas fa-file-word"></i>
+                    {% else %}
+                      <i class="fas fa-file"></i>
+                    {% endif %}
+                  </div>
+
+                  <div class="material-header">
+                    <h4 class="material-title">{{ material.title }}</h4>
+                    <div class="material-badges">
+                      <span class="material-category">{{ material.category|replace('_', ' ')|title }}</span>
+                      <span class="material-grade">
+                        {% if material.grade_level == 'pre_k' %}Pre-K
+                        {% elif material.grade_level == 'kindergarten' %}K
+                        {% elif material.grade_level == 'grade_1' %}G1
+                        {% elif material.grade_level == 'grade_2' %}G2
+                        {% elif material.grade_level == 'grade_3' %}G3
+                        {% elif material.grade_level == 'grade_4' %}G4
+                        {% elif material.grade_level == 'grade_5' %}G5
+                        {% else %}All
+                        {% endif %}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="material-description">
+                    {{ material.description or 'No description available.' }}
+                  </div>
+                  
+                  <div class="material-meta">
+                    <span><i class="fas fa-file"></i> <span class="file-type-badge">{{ material.file_type|upper }}</span></span>
+                    <span><i class="fas fa-download"></i> {{ material.download_count or 0 }} downloads</span>
+                  </div>
+                  
+                  <div class="material-actions">
+                    <a href="{{ url_for('download_classroom_material', material_id=material._id) }}" class="btn btn-primary">
+                      <i class="fas fa-redo"></i> Re-download
+                    </a>
+                    
+                    {% if material.file_type in ['pdf', 'jpg', 'jpeg', 'png', 'mp4'] %}
+                      <a href="{{ url_for('view_classroom_material', material_id=material._id) }}" class="btn btn-secondary" target="_blank">
+                        <i class="fas fa-eye"></i> View
+                      </a>
+                    {% else %}
+                      <span class="btn btn-disabled">
+                        <i class="fas fa-eye-slash"></i> View Only
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="empty-state">
+              <i class="fas fa-download"></i>
+              <p>No downloaded materials yet.</p>
+              <a href="{{ url_for('classroom') }}" class="btn btn-primary" style="margin-top: 10px;">
+                <i class="fas fa-download"></i> Start Downloading
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="section">
+          <div class="section-header">
+            <h3><i class="fas fa-history"></i> Recent Activity</h3>
+          </div>
+
+          <div class="activity-list">
+            {% for activity in recent_activities %}
+              <div class="activity-item">
+                <div class="activity-icon">
+                  <i class="fas fa-{{ activity.icon }}"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-title">{{ activity.title }}</div>
+                  <div class="activity-desc">{{ activity.description }}</div>
+                  <div class="activity-time">{{ activity.time }}</div>
+                </div>
+              </div>
+            {% else %}
+              <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <p>No recent activity to display.</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

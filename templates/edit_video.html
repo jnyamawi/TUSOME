@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Video - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f8fc;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0056b3;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        h1 { margin: 0; font-size: 1.5em; }
+        a { color: white; text-decoration: none; margin-left: 15px; }
+        a:hover { text-decoration: underline; }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-help {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            background: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background: #218838;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .preview-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .preview-thumbnail {
+            max-width: 300px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Edit Educational Video</h1>
+            <nav>
+                <a href="{{ url_for('admin_video_management') }}">📹 Video Management</a>
+                <a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a>
+                <a href="{{ url_for('index') }}">🏠 Home</a>
+            </nav>
+        </header>
+
+        <div class="page-header">
+            <h2>Edit Video: {{ video.title }}</h2>
+            <p>Update the video details below</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" id="videoForm">
+            <div class="form-group">
+                <label for="title">Video Title *</label>
+                <input type="text" id="title" name="title" value="{{ video.title }}" required 
+                       placeholder="Enter a descriptive title for the video">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Video Description *</label>
+                <textarea id="description" name="description" required 
+                          placeholder="Provide a detailed description of the video content">{{ video.description }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="youtube_url">YouTube URL *</label>
+                <input type="url" id="youtube_url" name="youtube_url" value="{{ video.youtube_url }}" required 
+                       placeholder="https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID"
+                       oninput="updatePreview()">
+                <div class="form-help">
+                    Supported formats: https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category *</label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="Stories" {% if video.category == 'Stories' %}selected{% endif %}>Stories</option>
+                    <option value="Mathematics" {% if video.category == 'Mathematics' %}selected{% endif %}>Mathematics</option>
+                    <option value="Science" {% if video.category == 'Science' %}selected{% endif %}>Science</option>
+                    <option value="Language" {% if video.category == 'Language' %}selected{% endif %}>Language</option>
+                    <option value="Writing" {% if video.category == 'Writing' %}selected{% endif %}>Writing</option>
+                    <option value="Arts" {% if video.category == 'Arts' %}selected{% endif %}>Arts</option>
+                    <option value="Social Studies" {% if video.category == 'Social Studies' %}selected{% endif %}>Social Studies</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="difficulty_level">Difficulty Level *</label>
+                <select id="difficulty_level" name="difficulty_level" required>
+                    <option value="">Select difficulty level</option>
+                    <option value="Beginner" {% if video.difficulty_level == 'Beginner' %}selected{% endif %}>Beginner</option>
+                    <option value="Intermediate" {% if video.difficulty_level == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+                    <option value="Advanced" {% if video.difficulty_level == 'Advanced' %}selected{% endif %}>Advanced</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Duration</label>
+                <input type="text" id="duration" name="duration" value="{{ video.duration or '' }}"
+                       placeholder="e.g., 15:30 or 1 hour 15 minutes">
+                <div class="form-help">
+                    Optional: Video duration in minutes:seconds or descriptive format
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags</label>
+                <input type="text" id="tags" name="tags" value="{{ video.tags|join(', ') if video.tags else '' }}"
+                       placeholder="Enter comma-separated tags (e.g., python, programming, tutorial)">
+                <div class="form-help">
+                    Optional: Add relevant tags to help with search and categorization
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <h3>Preview</h3>
+                <img src="{{ video.thumbnail_url }}" alt="{{ video.title }}" class="preview-thumbnail"
+                     onerror="this.src='https://via.placeholder.com/300x169/0056b3/ffffff?text=No+Thumbnail'">
+                <div><strong>Current Video ID:</strong> {{ video.youtube_id }}</div>
+                <div><strong>Views:</strong> {{ video.view_count or 0 }}</div>
+                <div><strong>Status:</strong> {{ 'Active' if video.is_active else 'Inactive' }}</div>
+                <div><strong>Added:</strong> {{ video.created_at.strftime('%Y-%m-%d') if video.created_at else 'Unknown' }}</div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">
+                    <i class="fas fa-save"></i> Update Video
+                </button>
+                <a href="{{ url_for('admin_video_management') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/,
+                /youtube\.com\/embed\/([^?]+)/,
+                /youtube\.com\/v\/([^?]+)/
+            ];
+            
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            
+            return null;
+        }
+
+        function updatePreview() {
+            const url = document.getElementById('youtube_url').value;
+            const videoId = extractYouTubeId(url);
+            
+            if (videoId) {
+                // You could update the preview here if needed
+                console.log('New video ID:', videoId);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - TUSOME.com</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* 🌈 BODY: Repeating small background */
+    body {
+      font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+      background: url("{{ url_for('static', filename='images/BG.jpg') }}") repeat;
+      background-size: 80px 80px;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    /* ✨ Overlay for readability */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(240, 248, 255, 0.9);
+      z-index: -1;
+    }
+
+    /* 📦 Centered container */
+    .container {
+      max-width: 800px; /* Wider to fit image + form */
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap; /* For mobile */
+    }
+
+    /* 💡 Login Form Section */
+    .login-form {
+      background: white;
+      padding: 25px 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: left;
+      min-width: 300px;
+      max-width: 400px;
+    }
+
+    header {
+      background-color: #6ca0dc;
+      color: white;
+      padding: 20px;
+      border-bottom: 4px solid #4178be;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      text-align: center;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: 0.3s;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Flash messages */
+    .flash {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin: 20px auto;
+      max-width: 400px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .flash.success { background: #d4edda; color: #155724; }
+    .flash.danger  { background: #f8d7da; color: #721c24; }
+    .flash.info    { background: #d1ecf1; color: #0c5460; }
+
+    /* 🐭 Cartoon Image Section */
+    .cartoon-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 300px;
+      padding: 5px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .cartoon-img {
+      width: 220px;
+      height: auto;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .cartoon-caption {
+      font-family: 'Comic Sans MS', cursive;
+      font-size: 1.1em;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        gap: 20px;
+      }
+      .login-form, .cartoon-section {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Login to TUSOME.com</h1>
+    </header>
+    <!-- 🔔 FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% set last_message = messages[-1] %}
+        <div id="flash-message" class="flash {{ last_message[0] }}">
+          {{ last_message[1] }}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- 💡 LOGIN FORM -->
+    <div class="login-form">
+      <form method="post">
+        <label>Username:</label><br>
+        <input type="text" name="username" placeholder="Enter your username" required><br>
+
+        <label>Password:</label><br>
+        <input type="password" name="password" placeholder="Enter your password" required><br>
+
+        <button type="submit">Login</button>
+      </form>
+
+      <p style="margin-top: 20px;">
+        <a href="{{ url_for('register') }}">Create account</a> |
+        <a href="{{ url_for('reset_request') }}">Forgot password?</a>
+      </p>
+    </div>
+
+    <!-- 🐭 CARTOON IMAGE SECTION -->
+    <div class="cartoon-section">
+      <img src="{{ url_for('static', filename='images/mouse.jpg') }}" alt="Friendly Cartoon Mouse" class="cartoon-img">
+      <div class="cartoon-caption">
+        Hi there! Let’s learn together!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Auto-hide flash message after 3 seconds
+    setTimeout(() => {
+      const flash = document.getElementById("flash-message");
+      if (flash) {
+        flash.style.transition = "opacity 0.5s ease";
+        flash.style.opacity = 0;
+        setTimeout(() => flash.remove(), 500);
+      }
+    }, 3000);
+  </script>
+</body>
+</html>

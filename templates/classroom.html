@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classroom - Study Materials</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f8fc;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0056b3;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    h1 { margin: 0; font-size: 1.5em; }
+    a { color: white; text-decoration: none; margin-left: 15px; }
+    a:hover { text-decoration: underline; }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .page-header h2 {
+      color: #0056b3;
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    /* FILTER SECTION */
+    .filter-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border-left: 4px solid #0056b3;
+    }
+
+    .filter-section h3 {
+      margin: 0 0 20px 0;
+      color: #0056b3;
+      font-size: 1.3em;
+    }
+
+    .filter-groups {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-group label {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #495057;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border: 2px solid #0056b3;
+      background: white;
+      color: #0056b3;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+    }
+
+    .filter-btn:hover {
+      background: #e3f2fd;
+    }
+
+    .filter-btn.active {
+      background: #0056b3;
+      color: white;
+    }
+
+    .search-box {
+      padding: 10px 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 25px;
+      font-size: 1em;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #0056b3;
+    }
+
+    .results-count {
+      color: #6c757d;
+      font-size: 0.9em;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .clear-filters {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin-left: auto;
+    }
+
+    .clear-filters:hover {
+      background: #545b62;
+    }
+
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
+
+    .material-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #0056b3;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .material-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    .material-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 15px;
+    }
+
+    .material-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #0056b3;
+      margin: 0;
+      flex: 1;
+    }
+
+    .material-badges {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: flex-end;
+    }
+
+    .material-category {
+      background: #e9ecef;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      color: #495057;
+      white-space: nowrap;
+    }
+
+    .material-grade {
+      background: #d4edda;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      color: #155724;
+      white-space: nowrap;
+    }
+
+    .material-description {
+      color: #666;
+      margin-bottom: 15px;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .material-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85em;
+      color: #888;
+      margin-bottom: 15px;
+    }
+
+    .material-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9em;
+      flex: 1;
+      min-width: 120px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: #0056b3;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #004494;
+    }
+
+    .btn-secondary {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #218838;
+    }
+
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #138496;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+      grid-column: 1 / -1;
+    }
+
+    .empty-state i {
+      font-size: 4em;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    .file-icon {
+      font-size: 2em;
+      margin-bottom: 10px;
+      color: #0056b3;
+    }
+
+    .material-footer {
+      margin-top: auto;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .search-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .file-type-badge {
+      background: #007bff;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.7em;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+      
+      .materials-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .material-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        min-width: auto;
+      }
+
+      .filter-groups {
+        grid-template-columns: 1fr;
+      }
+
+      .search-container {
+        flex-direction: column;
+      }
+
+      .clear-filters {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Classroom</h1>
+      <nav>
+        <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+    </header>
+
+    <div class="page-header">
+      <h2>Study Materials</h2>
+      <p>Access educational resources filtered by subject and grade level</p>
+    </div>
+
+    <!-- FILTER SECTION -->
+    <div class="filter-section">
+      <h3>Filter Materials</h3>
+      
+      <div class="search-container">
+        <input type="text" id="searchInput" class="search-box" placeholder="Search materials by title or description...">
+        <button class="clear-filters" id="clearFilters">
+          <i class="fas fa-times"></i> Clear Filters
+        </button>
+      </div>
+
+      <div class="filter-groups">
+        <!-- Subject Filter -->
+        <div class="filter-group">
+          <label>Subject:</label>
+          <div class="filter-options" id="subjectFilters">
+            <button class="filter-btn active" data-filter="subject" data-value="all">All Subjects</button>
+            <button class="filter-btn" data-filter="subject" data-value="mathematics">Mathematics</button>
+            <button class="filter-btn" data-filter="subject" data-value="science">Science</button>
+            <button class="filter-btn" data-filter="subject" data-value="language">Language</button>
+            <button class="filter-btn" data-filter="subject" data-value="Arts and Music">Arts and Music</button>
+            <button class="filter-btn" data-filter="subject" data-value="Social Studies">Social Studies</button>
+            <button class="filter-btn" data-filter="subject" data-value="Reading and Writing">Reading and Writing</button>
+            <button class="filter-btn" data-filter="subject" data-value="Physical Education">Physical Education</button>
+            <button class="filter-btn" data-filter="subject" data-value="Health and Hygiene">Health and Hygiene</button>
+            <button class="filter-btn" data-filter="subject" data-value="Environmental Studies">Environmental Studies</button>
+            <button class="filter-btn" data-filter="subject" data-value="Technology and Computing">Technology and Computing</button>
+          </div>
+        </div>
+
+        <!-- Grade Level Filter -->
+        <div class="filter-group">
+          <label>Grade Level:</label>
+          <div class="filter-options" id="gradeFilters">
+            <button class="filter-btn active" data-filter="grade" data-value="all">All Grades</button>
+            <button class="filter-btn" data-filter="grade" data-value="pre_k">Pre-K</button>
+            <button class="filter-btn" data-filter="grade" data-value="kindergarten">Kindergarten</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_1">Grade 1</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_2">Grade 2</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_3">Grade 3</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_4">Grade 4</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_5">Grade 5</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-count" id="resultsCount">
+        Showing all {{ materials|length }} materials
+      </div>
+    </div>
+
+    {% if materials %}
+      <div class="materials-grid" id="materialsGrid">
+        {% for material in materials %}
+          <div class="material-card" 
+               data-category="{{ material.category }}" 
+               data-grade="{{ material.grade_level or 'all' }}"
+               data-title="{{ material.title|lower }}" 
+               data-description="{{ material.description|lower }}"
+               data-file-type="{{ material.file_type }}">
+            <div class="file-icon">
+              {% if material.file_type == 'pdf' %}
+                <i class="fas fa-file-pdf"></i>
+              {% elif material.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                <i class="fas fa-file-image"></i>
+              {% elif material.file_type in ['mp4', 'avi', 'mov'] %}
+                <i class="fas fa-file-video"></i>
+              {% elif material.file_type in ['doc', 'docx'] %}
+                <i class="fas fa-file-word"></i>
+              {% else %}
+                <i class="fas fa-file"></i>
+              {% endif %}
+            </div>
+
+            <div class="material-header">
+              <h3 class="material-title">{{ material.title }}</h3>
+              <div class="material-badges">
+                <span class="material-category">{{ material.category|replace('_', ' ')|title }}</span>
+                <span class="material-grade">
+                  {% if material.grade_level == 'pre_k' %}Pre-K
+                  {% elif material.grade_level == 'kindergarten' %}K
+                  {% elif material.grade_level == 'grade_1' %}G1
+                  {% elif material.grade_level == 'grade_2' %}G2
+                  {% elif material.grade_level == 'grade_3' %}G3
+                  {% elif material.grade_level == 'grade_4' %}G4
+                  {% elif material.grade_level == 'grade_5' %}G5
+                  {% else %}All
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+            
+            <div class="material-description">
+              {{ material.description or 'No description available.' }}
+            </div>
+            
+            <div class="material-footer">
+              <div class="material-meta">
+                <span><i class="fas fa-file"></i> <span class="file-type-badge">{{ material.file_type|upper }}</span></span>
+                <span><i class="fas fa-download"></i> {{ material.download_count or 0 }}</span>
+              </div>
+              
+              <div class="material-actions">
+                <a href="{{ url_for('download_classroom_material', material_id=material._id) }}" class="btn btn-primary">
+                  <i class="fas fa-download"></i> Download
+                </a>
+                
+                {% if material.file_type in ['pdf', 'jpg', 'jpeg', 'png', 'mp4'] %}
+                  <a href="{{ url_for('view_classroom_material', material_id=material._id) }}" class="btn btn-secondary" target="_blank">
+                    <i class="fas fa-eye"></i> View
+                  </a>
+                {% else %}
+                  <span class="btn btn-info" style="cursor: not-allowed; opacity: 0.6;">
+                    <i class="fas fa-eye-slash"></i> View Only
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-folder-open"></i>
+        <h3>No Materials Available</h3>
+        <p>Check back later for new study materials.</p>
+        {% if current_user.role == 'admin' %}
+          <a href="{{ url_for('admin_classroom_materials') }}" class="btn btn-primary" style="margin-top: 15px;">
+            <i class="fas fa-plus"></i> Upload Materials
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const searchInput = document.getElementById('searchInput');
+      const clearFiltersBtn = document.getElementById('clearFilters');
+      const materialsGrid = document.getElementById('materialsGrid');
+      const resultsCount = document.getElementById('resultsCount');
+      const materialCards = document.querySelectorAll('.material-card');
+
+      let currentFilters = {
+        subject: 'all',
+        grade: 'all',
+        search: ''
+      };
+
+      // Filter button click handlers
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const filterType = this.dataset.filter;
+          const filterValue = this.dataset.value;
+          
+          // Update active button for this filter type
+          document.querySelectorAll(`[data-filter="${filterType}"]`).forEach(b => {
+            b.classList.remove('active');
+          });
+          this.classList.add('active');
+          
+          // Update current filter
+          currentFilters[filterType] = filterValue;
+          filterMaterials();
+        });
+      });
+
+      // Search functionality
+      searchInput.addEventListener('input', function() {
+        currentFilters.search = this.value.toLowerCase().trim();
+        filterMaterials();
+      });
+
+      // Clear all filters
+      clearFiltersBtn.addEventListener('click', function() {
+        // Reset all filter buttons
+        filterBtns.forEach(btn => {
+          if (btn.dataset.value === 'all') {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+        
+        // Reset current filters
+        currentFilters = {
+          subject: 'all',
+          grade: 'all',
+          search: ''
+        };
+        
+        // Clear search
+        searchInput.value = '';
+        
+        // Apply filters
+        filterMaterials();
+      });
+
+      function filterMaterials() {
+        let visibleCount = 0;
+
+        materialCards.forEach(card => {
+          const category = card.dataset.category;
+          const grade = card.dataset.grade;
+          const title = card.dataset.title;
+          const description = card.dataset.description;
+          const fileType = card.dataset.fileType;
+          
+          // Check subject filter
+          const matchesSubject = currentFilters.subject === 'all' || category === currentFilters.subject;
+          
+          // Check grade filter
+          const matchesGrade = currentFilters.grade === 'all' || grade === currentFilters.grade || grade === 'all';
+          
+          // Check search filter
+          const matchesSearch = !currentFilters.search || 
+                               title.includes(currentFilters.search) || 
+                               description.includes(currentFilters.search) ||
+                               fileType.includes(currentFilters.search);
+          
+          if (matchesSubject && matchesGrade && matchesSearch) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // Update results count
+        const totalCount = materialCards.length;
+        if (visibleCount === 0) {
+          resultsCount.textContent = 'No materials found matching your filters';
+          resultsCount.style.color = '#dc3545';
+        } else if (visibleCount === totalCount) {
+          resultsCount.textContent = `Showing all ${totalCount} materials`;
+          resultsCount.style.color = '#6c757d';
+        } else {
+          resultsCount.textContent = `Showing ${visibleCount} of ${totalCount} materials`;
+          resultsCount.style.color = '#28a745';
+        }
+      }
+
+      // Initialize filter
+      filterMaterials();
+    });
+  </script>
+</body>
+</html>

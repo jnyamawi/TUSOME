@@ -6,3 +6,5 @@ itsdangerous
 Werkzeug
 python-dotenv
 pymongo
+dnspython
+gunicorn

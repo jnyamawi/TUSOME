@@ -75,17 +75,51 @@
       margin-bottom: 5px;
     }
 
+    .input-group {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
     input {
       width: 100%;
       padding: 12px;
-      margin: 0 0 15px 0;
       border: 1px solid #ccc;
       border-radius: 8px;
       box-sizing: border-box;
       font-size: 16px; /* Prevents zoom on iOS */
     }
 
-    button {
+    input:focus {
+      outline: none;
+      border-color: #4caf50;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.3s ease;
+    }
+
+    .password-toggle:hover {
+      color: #333;
+      background-color: #f5f5f5;
+    }
+
+    .password-toggle:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+    }
+
+    button[type="submit"] {
       background-color: #4caf50;
       color: white;
       padding: 12px;
@@ -96,9 +130,10 @@
       transition: 0.3s;
       width: 100%;
       font-weight: bold;
+      margin-top: 10px;
     }
 
-    button:hover {
+    button[type="submit"]:hover {
       background-color: #45a049;
     }
 
@@ -188,6 +223,11 @@
       .cartoon-img {
         width: 130px;
       }
+      
+      .password-toggle {
+        right: 10px;
+        padding: 3px;
+      }
     }
 
     /* Desktop adjustments */
@@ -240,11 +280,18 @@
       <!-- 💡 LOGIN FORM -->
       <div class="login-form">
         <form method="post">
-          <label for="username">Username:</label>
-          <input type="text" id="username" name="username" placeholder="Enter your username" required>
+          <div class="input-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+          </div>
 
-          <label for="password">Password:</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          <div class="input-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <button type="button" class="password-toggle" id="passwordToggle" aria-label="Show password">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
 
           <button type="submit">Login</button>
         </form>
@@ -265,6 +312,9 @@
     </div>
   </div>
 
+  <!-- Font Awesome for the eye icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <script>
     // Auto-hide flash message after 3 seconds
     setTimeout(() => {
@@ -282,6 +332,39 @@
       if (usernameField) {
         usernameField.focus();
       }
+    });
+
+    // Password visibility toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const passwordToggle = document.getElementById('passwordToggle');
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = passwordToggle.querySelector('i');
+      
+      passwordToggle.addEventListener('click', function() {
+        // Toggle password visibility
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle eye icon
+        if (type === 'text') {
+          eyeIcon.classList.remove('fa-eye');
+          eyeIcon.classList.add('fa-eye-slash');
+          passwordToggle.setAttribute('aria-label', 'Hide password');
+        } else {
+          eyeIcon.classList.remove('fa-eye-slash');
+          eyeIcon.classList.add('fa-eye');
+          passwordToggle.setAttribute('aria-label', 'Show password');
+        }
+      });
+      
+      // Add focus styling when password field is focused
+      passwordInput.addEventListener('focus', function() {
+        passwordToggle.style.color = '#4caf50';
+      });
+      
+      passwordInput.addEventListener('blur', function() {
+        passwordToggle.style.color = '#666';
+      });
     });
   </script>
 </body>

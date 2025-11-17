@@ -2,19 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-   <!-- Makes the webpage scale properly on phones, tablets, laptops -->
+  <!-- Makes the webpage scale properly on phones, tablets, laptops -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register - TUSOME.com</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    /* 🌈 BODY: Repeating small background (match login) */
+    /* 🌈 BODY: Repeating small background */
     body {
       font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
       background: url("{{ url_for('static', filename='images/BG.jpg') }}") repeat;
       background-size: 80px 80px;
       margin: 0;
       padding: 0;
-      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     /* ✨ Overlay for readability */
@@ -29,90 +33,137 @@
       z-index: -1;
     }
 
-    /* 📦 Centered flexible container */
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 30px;
-      flex-wrap: wrap;
+    /* 📦 Main container */
+    .main-container {
+      width: 100%;
+      max-width: 450px;
+      padding: 15px;
+      box-sizing: border-box;
     }
 
     header {
       background-color: #6ca0dc;
       color: white;
-      padding: 20px;
+      padding: 15px;
       border-bottom: 4px solid #4178be;
       border-radius: 12px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 100%;
       text-align: center;
     }
 
-    /* 💡 Registration Form */
+    header h1 {
+      margin: 0;
+      font-size: 1.4em;
+    }
+
+    /* 💡 Registration Form Section */
     .register-form {
       background: white;
-      padding: 25px 40px;
+      padding: 20px;
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       text-align: left;
-      min-width: 300px;
-      max-width: 400px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
     }
 
     label {
       font-weight: bold;
       color: #333;
+      font-size: 0.95em;
+      display: block;
+      margin-bottom: 5px;
     }
+
     input {
       width: 100%;
-      padding: 10px;
-      margin: 6px 0 14px;
+      padding: 12px;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 8px;
       box-sizing: border-box;
+      font-size: 16px; /* Prevents zoom on iOS */
     }
+
+    input:focus {
+      outline: none;
+      border-color: #4caf50;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
     button {
       background-color: #4caf50;
       color: white;
-      padding: 10px 20px;
+      padding: 12px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-size: 1em;
       transition: 0.3s;
       width: 100%;
+      font-weight: bold;
+      margin-top: 10px;
     }
+
     button:hover {
       background-color: #45a049;
     }
+
+    .links {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
     a {
       color: #0066cc;
       text-decoration: none;
+      font-size: 0.9em;
     }
+
     a:hover {
       text-decoration: underline;
     }
 
     /* Flash messages */
-    .flashes {
-      list-style: none;
-      padding: 0;
-      margin: 20px auto;
-      max-width: 400px;
-    }
     .flash {
-      padding: 10px;
-      border-radius: 6px;
-      margin-bottom: 10px;
+      display: block;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin: 0 auto 15px auto;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
     }
+
     .flash.success { background: #d4edda; color: #155724; }
-    .flash.danger { background: #f8d7da; color: #721c24; }
-    .flash.info { background: #d1ecf1; color: #0c5460; }
+    .flash.danger  { background: #f8d7da; color: #721c24; }
+    .flash.info    { background: #d1ecf1; color: #0c5460; }
+
+    /* Password requirements */
+    .password-requirements {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-size: 0.85em;
+      color: #666;
+    }
+
+    .password-requirements ul {
+      margin: 5px 0;
+      padding-left: 20px;
+    }
+
+    .password-requirements li {
+      margin-bottom: 3px;
+    }
 
     /* 🐭 Cartoon Image Section */
     .cartoon-section {
@@ -121,17 +172,16 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      max-width: 350px;
-      padding: 20px;
-      background: white;
+      padding: 15px;
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      background: white;
     }
 
     .cartoon-img {
-      width: 220px;
+      width: 150px;
       height: auto;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       animation: bounce 2s ease-in-out infinite;
@@ -139,79 +189,179 @@
 
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      50% { transform: translateY(-8px); }
     }
 
     .cartoon-caption {
       font-family: 'Comic Sans MS', cursive;
-      font-size: 1.1em;
+      font-size: 1em;
       color: #333;
-      margin-top: 10px;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        gap: 20px;
-      }
-      .register-form, .cartoon-section {
-        width: 100%;
+    /* Responsive adjustments for very small screens */
+    @media (max-width: 360px) {
+      .main-container {
+        padding: 10px;
         max-width: 100%;
+      }
+      
+      header h1 {
+        font-size: 1.2em;
+      }
+      
+      .register-form {
+        padding: 15px;
+      }
+      
+      input, button {
+        padding: 10px;
+      }
+      
+      .cartoon-img {
+        width: 130px;
+      }
+    }
+
+    /* Tablet adjustments */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .main-container {
+        max-width: 420px;
+      }
+    }
+
+    /* Desktop adjustments */
+    @media (min-width: 769px) {
+      .main-container {
+        max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .content-wrapper {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .register-form {
+        min-width: 400px;
+        max-width: 450px;
+        margin-bottom: 0;
+      }
+      
+      .cartoon-section {
+        min-width: 250px;
+        max-width: 300px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="main-container">
     <header>
-      <h1>CREATE YOUR FAMILY ACCOUNT</h1>
+      <h1>Join TUSOME.com</h1>
     </header>
-
+    
+    <!-- 🔔 FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <ul class="flashes">
-          {% for category, message in messages %}
-            <li class="flash {{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
+        {% set last_message = messages[-1] %}
+        <div id="flash-message" class="flash {{ last_message[0] }}">
+          {{ last_message[1] }}
+        </div>
       {% endif %}
     {% endwith %}
 
-    <p style="background-color: white; font-size: 20px; padding: 15px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 700px; margin-bottom: 20px;">
-      Enter your information below to create your classroom account.
-      Your username, email address and password will be the information 
-      you will use to access your TUSOME.com account and these can be changed at any time from within the site.
-</p>
+    <div class="content-wrapper">
+      <!-- 💡 REGISTRATION FORM -->
+      <div class="register-form">
+        <form method="post">
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Choose a username" required>
+          </div>
 
+          <div class="form-group">
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          </div>
 
-    <!-- 💡 REGISTRATION FORM -->
-    <div class="register-form">
-      <form method="post">
-        <label>Username:</label><br>
-        <input type="text" name="username" placeholder="Choose a username" required><br>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Create a password" required>
+            
+            <div class="password-requirements">
+              <strong>Password should include:</strong>
+              <ul>
+                <li>At least 8 characters</li>
+                <li>One uppercase letter</li>
+                <li>One number</li>
+                <li>One special character</li>
+              </ul>
+            </div>
+          </div>
 
-        <label>Email:</label><br>
-        <input type="email" name="email" placeholder="Enter your email" required><br>
+          <div class="form-group">
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
+          </div>
 
-        <label>Password:</label><br>
-        <input type="password" name="password" placeholder="Create a password" required><br>
+          <button type="submit">Create Account</button>
+        </form>
 
-        <button type="submit">Register</button>
-      </form>
+        <div class="links">
+          <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        </div>
+      </div>
 
-      <p style="margin-top: 15px;">
-        Already have an account? <a href="{{ url_for('login') }}">Login here</a>
-      </p>
-    </div>
-
-    <!-- 🐭 CARTOON IMAGE SECTION -->
-    <div class="cartoon-section">
-      <img src="{{ url_for('static', filename='images/register.jpg') }}" alt="Friendly Cartoon Companion" class="cartoon-img">
-      <div class="cartoon-caption">
-        Welcome! to our Classroom <br>Let’s start your learning journey! 🌟📚
+      <!-- 🐭 CARTOON IMAGE SECTION -->
+      <div class="cartoon-section">
+        <img src="{{ url_for('static', filename='images/mouse.jpg') }}" alt="Friendly Cartoon Mouse" class="cartoon-img">
+        <div class="cartoon-caption">
+          Welcome to TUSOME!<br>Let's start learning together!
+        </div>
       </div>
     </div>
   </div>
+
+  <script>
+    // Auto-hide flash message after 3 seconds
+    setTimeout(() => {
+      const flash = document.getElementById("flash-message");
+      if (flash) {
+        flash.style.transition = "opacity 0.5s ease";
+        flash.style.opacity = 0;
+        setTimeout(() => flash.remove(), 500);
+      }
+    }, 3000);
+    
+    // Focus on username field when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const usernameField = document.getElementById('username');
+      if (usernameField) {
+        usernameField.focus();
+      }
+    });
+
+    // Password confirmation validation
+    document.addEventListener('DOMContentLoaded', function() {
+      const password = document.getElementById('password');
+      const confirmPassword = document.getElementById('confirm_password');
+      
+      function validatePassword() {
+        if (password.value !== confirmPassword.value) {
+          confirmPassword.setCustomValidity("Passwords don't match");
+        } else {
+          confirmPassword.setCustomValidity('');
+        }
+      }
+      
+      password.addEventListener('change', validatePassword);
+      confirmPassword.addEventListener('keyup', validatePassword);
+    });
+  </script>
 </body>
 </html>

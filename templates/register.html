@@ -69,6 +69,7 @@
 
     .form-group {
       margin-bottom: 15px;
+      position: relative;
     }
 
     label {
@@ -81,7 +82,7 @@
 
     input {
       width: 100%;
-      padding: 12px;
+      padding: 12px 40px 12px 12px;
       border: 1px solid #ccc;
       border-radius: 8px;
       box-sizing: border-box;
@@ -94,7 +95,36 @@
       box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
     }
 
-    button {
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.3s ease;
+      height: 24px;
+      width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .password-toggle:hover {
+      color: #333;
+      background-color: #f5f5f5;
+    }
+
+    .password-toggle:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+    }
+
+    button[type="submit"] {
       background-color: #4caf50;
       color: white;
       padding: 12px;
@@ -108,7 +138,7 @@
       margin-top: 10px;
     }
 
-    button:hover {
+    button[type="submit"]:hover {
       background-color: #45a049;
     }
 
@@ -214,11 +244,18 @@
       }
       
       input, button {
-        padding: 10px;
+        padding: 10px 36px 10px 10px;
       }
       
       .cartoon-img {
         width: 130px;
+      }
+      
+      .password-toggle {
+        right: 10px;
+        padding: 3px;
+        height: 20px;
+        width: 20px;
       }
     }
 
@@ -292,6 +329,9 @@
           <div class="form-group">
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" placeholder="Create a password" required>
+            <button type="button" class="password-toggle" id="passwordToggle" aria-label="Show password">
+              <i class="fas fa-eye"></i>
+            </button>
             
             <div class="password-requirements">
               <strong>Password should include:</strong>
@@ -307,6 +347,9 @@
           <div class="form-group">
             <label for="confirm_password">Confirm Password:</label>
             <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
+            <button type="button" class="password-toggle" id="confirmPasswordToggle" aria-label="Show confirm password">
+              <i class="fas fa-eye"></i>
+            </button>
           </div>
 
           <button type="submit">Create Account</button>
@@ -326,6 +369,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Font Awesome for the eye icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <script>
     // Auto-hide flash message after 3 seconds
@@ -361,6 +407,72 @@
       
       password.addEventListener('change', validatePassword);
       confirmPassword.addEventListener('keyup', validatePassword);
+    });
+
+    // Password visibility toggle for password field
+    document.addEventListener('DOMContentLoaded', function() {
+      const passwordToggle = document.getElementById('passwordToggle');
+      const passwordInput = document.getElementById('password');
+      const passwordEyeIcon = passwordToggle.querySelector('i');
+      
+      passwordToggle.addEventListener('click', function() {
+        // Toggle password visibility
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle eye icon
+        if (type === 'text') {
+          passwordEyeIcon.classList.remove('fa-eye');
+          passwordEyeIcon.classList.add('fa-eye-slash');
+          passwordToggle.setAttribute('aria-label', 'Hide password');
+        } else {
+          passwordEyeIcon.classList.remove('fa-eye-slash');
+          passwordEyeIcon.classList.add('fa-eye');
+          passwordToggle.setAttribute('aria-label', 'Show password');
+        }
+      });
+      
+      // Add focus styling when password field is focused
+      passwordInput.addEventListener('focus', function() {
+        passwordToggle.style.color = '#4caf50';
+      });
+      
+      passwordInput.addEventListener('blur', function() {
+        passwordToggle.style.color = '#666';
+      });
+    });
+
+    // Password visibility toggle for confirm password field
+    document.addEventListener('DOMContentLoaded', function() {
+      const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
+      const confirmPasswordInput = document.getElementById('confirm_password');
+      const confirmPasswordEyeIcon = confirmPasswordToggle.querySelector('i');
+      
+      confirmPasswordToggle.addEventListener('click', function() {
+        // Toggle password visibility
+        const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        confirmPasswordInput.setAttribute('type', type);
+        
+        // Toggle eye icon
+        if (type === 'text') {
+          confirmPasswordEyeIcon.classList.remove('fa-eye');
+          confirmPasswordEyeIcon.classList.add('fa-eye-slash');
+          confirmPasswordToggle.setAttribute('aria-label', 'Hide confirm password');
+        } else {
+          confirmPasswordEyeIcon.classList.remove('fa-eye-slash');
+          confirmPasswordEyeIcon.classList.add('fa-eye');
+          confirmPasswordToggle.setAttribute('aria-label', 'Show confirm password');
+        }
+      });
+      
+      // Add focus styling when confirm password field is focused
+      confirmPasswordInput.addEventListener('focus', function() {
+        confirmPasswordToggle.style.color = '#4caf50';
+      });
+      
+      confirmPasswordInput.addEventListener('blur', function() {
+        confirmPasswordToggle.style.color = '#666';
+      });
     });
   </script>
 </body>

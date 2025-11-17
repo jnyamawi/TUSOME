@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-   <!-- Makes the webpage scale properly on phones, tablets, laptops -->
+  <!-- Makes the webpage scale properly on phones, tablets, laptops -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Classroom - Study Materials</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -24,6 +24,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     }
 
+    /* UPDATED HEADER WITH RESPONSIVE NAVIGATION */
     header {
       display: flex;
       justify-content: space-between;
@@ -33,11 +34,75 @@
       padding: 15px 20px;
       border-radius: 10px;
       margin-bottom: 30px;
+      position: relative;
     }
 
-    h1 { margin: 0; font-size: 1.5em; }
-    a { color: white; text-decoration: none; margin-left: 15px; }
-    a:hover { text-decoration: underline; }
+    header h1 { 
+      margin: 0; 
+      font-size: 1.5em; 
+    }
+
+    /* NAVBAR STRUCTURE */
+    .navbar {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .menu-toggle {
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      margin-left: 15px;
+      background: none;
+      border: none;
+      display: none; /* Mobile only */
+    }
+
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* MOBILE MENU */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+      
+      nav {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background: #6ca0dc;
+        width: 200px;
+        border-radius: 8px;
+        padding: 10px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      }
+      
+      nav a {
+        margin: 0;
+        padding: 12px 15px;
+        display: block;
+      }
+      
+      nav a:hover {
+        background: rgba(255,255,255,0.2);
+      }
+    }
 
     .page-header {
       text-align: center;
@@ -353,14 +418,18 @@
 </head>
 <body>
   <div class="container">
+    <!-- UPDATED HEADER WITH RESPONSIVE NAVIGATION -->
     <header>
       <h1>Classroom</h1>
-      <nav>
-        <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('profile') }}">Profile</a>
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-      </nav>
+      <div class="navbar">
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <nav id="menu">
+          <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('profile') }}">Profile</a>
+          <a href="{{ url_for('index') }}">Home</a>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+      </div>
     </header>
 
     <div class="page-header">
@@ -378,45 +447,44 @@
           <i class="fas fa-times"></i> Clear Filters
         </button>
       </div>
-<div class="filter-groups" style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 500; line-height: 1.4;">
+      
+      <div class="filter-groups" style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 500; line-height: 1.4;">
         
-  <!-- Subject Filter -->
-  <div class="filter-group" style="margin-bottom: 15px;">
-    <label style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 600;">Subject:</label>
-    
-    <div class="filter-options" id="subjectFilters" style="margin-top: 8px;">
-      <button class="filter-btn active" data-filter="subject" data-value="all" style="font-family: Arial, sans-serif;">All Subjects</button>
-      <button class="filter-btn" data-filter="subject" data-value="mathematics" style="font-family: Arial, sans-serif;">Mathematics</button>
-      <button class="filter-btn" data-filter="subject" data-value="science" style="font-family: Arial, sans-serif;">Science</button>
-      <button class="filter-btn" data-filter="subject" data-value="language" style="font-family: Arial, sans-serif;">Language</button>
-      <button class="filter-btn" data-filter="subject" data-value="Arts and Music" style="font-family: Arial, sans-serif;">Arts and Music</button>
-      <button class="filter-btn" data-filter="subject" data-value="Social Studies" style="font-family: Arial, sans-serif;">Social Studies</button>
-      <button class="filter-btn" data-filter="subject" data-value="Reading and Writing" style="font-family: Arial, sans-serif;">Reading and Writing</button>
-      <button class="filter-btn" data-filter="subject" data-value="Physical Education" style="font-family: Arial, sans-serif;">Physical Education</button>
-      <button class="filter-btn" data-filter="subject" data-value="Health and Hygiene" style="font-family: Arial, sans-serif;">Health and Hygiene</button>
-      <button class="filter-btn" data-filter="subject" data-value="Environmental Studies" style="font-family: Arial, sans-serif;">Environmental Studies</button>
-      <button class="filter-btn" data-filter="subject" data-value="Technology and Computing" style="font-family: Arial, sans-serif;">Technology and Computing</button>
-    </div>
-  </div>
+        <!-- Subject Filter -->
+        <div class="filter-group" style="margin-bottom: 15px;">
+          <label style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 600;">Subject:</label>
+          
+          <div class="filter-options" id="subjectFilters" style="margin-top: 8px;">
+            <button class="filter-btn active" data-filter="subject" data-value="all" style="font-family: Arial, sans-serif;">All Subjects</button>
+            <button class="filter-btn" data-filter="subject" data-value="mathematics" style="font-family: Arial, sans-serif;">Mathematics</button>
+            <button class="filter-btn" data-filter="subject" data-value="science" style="font-family: Arial, sans-serif;">Science</button>
+            <button class="filter-btn" data-filter="subject" data-value="language" style="font-family: Arial, sans-serif;">Language</button>
+            <button class="filter-btn" data-filter="subject" data-value="Arts and Music" style="font-family: Arial, sans-serif;">Arts and Music</button>
+            <button class="filter-btn" data-filter="subject" data-value="Social Studies" style="font-family: Arial, sans-serif;">Social Studies</button>
+            <button class="filter-btn" data-filter="subject" data-value="Reading and Writing" style="font-family: Arial, sans-serif;">Reading and Writing</button>
+            <button class="filter-btn" data-filter="subject" data-value="Physical Education" style="font-family: Arial, sans-serif;">Physical Education</button>
+            <button class="filter-btn" data-filter="subject" data-value="Health and Hygiene" style="font-family: Arial, sans-serif;">Health and Hygiene</button>
+            <button class="filter-btn" data-filter="subject" data-value="Environmental Studies" style="font-family: Arial, sans-serif;">Environmental Studies</button>
+            <button class="filter-btn" data-filter="subject" data-value="Technology and Computing" style="font-family: Arial, sans-serif;">Technology and Computing</button>
+          </div>
+        </div>
 
-  <!-- Grade Level Filter -->
-  <div class="filter-group">
-    <label style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 600;">Grade Level:</label>
+        <!-- Grade Level Filter -->
+        <div class="filter-group">
+          <label style="font-family: Arial, sans-serif; font-size: 16px; font-weight: 600;">Grade Level:</label>
 
-    <div class="filter-options" id="gradeFilters" style="margin-top: 8px;">
-      <button class="filter-btn active" data-filter="grade" data-value="all" style="font-family: Arial, sans-serif;">All Grades</button>
-      <button class="filter-btn" data-filter="grade" data-value="pre_k" style="font-family: Arial, sans-serif;">Pre-K</button>
-      <button class="filter-btn" data-filter="grade" data-value="kindergarten" style="font-family: Arial, sans-serif;">Kindergarten</button>
-      <button class="filter-btn" data-filter="grade" data-value="grade_1" style="font-family: Arial, sans-serif;">Grade 1</button>
-      <button class="filter-btn" data-filter="grade" data-value="grade_2" style="font-family: Arial, sans-serif;">Grade 2</button>
-      <button class="filter-btn" data-filter="grade" data-value="grade_3" style="font-family: Arial, sans-serif;">Grade 3</button>
-      <button class="filter-btn" data-filter="grade" data-value="grade_4" style="font-family: Arial, sans-serif;">Grade 4</button>
-      <button class="filter-btn" data-filter="grade" data-value="grade_5" style="font-family: Arial, sans-serif;">Grade 5</button>
-    </div>
-  </div>
-
-</div>
-
+          <div class="filter-options" id="gradeFilters" style="margin-top: 8px;">
+            <button class="filter-btn active" data-filter="grade" data-value="all" style="font-family: Arial, sans-serif;">All Grades</button>
+            <button class="filter-btn" data-filter="grade" data-value="pre_k" style="font-family: Arial, sans-serif;">Pre-K</button>
+            <button class="filter-btn" data-filter="grade" data-value="kindergarten" style="font-family: Arial, sans-serif;">Kindergarten</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_1" style="font-family: Arial, sans-serif;">Grade 1</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_2" style="font-family: Arial, sans-serif;">Grade 2</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_3" style="font-family: Arial, sans-serif;">Grade 3</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_4" style="font-family: Arial, sans-serif;">Grade 4</button>
+            <button class="filter-btn" data-filter="grade" data-value="grade_5" style="font-family: Arial, sans-serif;">Grade 5</button>
+          </div>
+        </div>
+      </div>
 
       <div class="results-count" id="resultsCount">
         Showing all {{ materials|length }} materials
@@ -508,6 +576,12 @@
   </div>
 
   <script>
+    // Navigation toggle function
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      menu.style.display = (menu.style.display === "flex" || menu.style.display === "block") ? "none" : "flex";
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       const filterBtns = document.querySelectorAll('.filter-btn');
       const searchInput = document.getElementById('searchInput');

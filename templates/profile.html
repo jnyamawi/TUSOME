@@ -24,6 +24,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     }
 
+    /* UPDATED HEADER WITH RESPONSIVE NAVIGATION */
     header {
       display: flex;
       justify-content: space-between;
@@ -33,11 +34,75 @@
       padding: 15px 20px;
       border-radius: 10px;
       margin-bottom: 30px;
+      position: relative;
     }
 
-    h1 { margin: 0; font-size: 1.5em; }
-    a { color: white; text-decoration: none; margin-left: 15px; }
-    a:hover { text-decoration: underline; }
+    header h1 { 
+      margin: 0; 
+      font-size: 1.5em; 
+    }
+
+    /* NAVBAR STRUCTURE */
+    .navbar {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .menu-toggle {
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      margin-left: 15px;
+      background: none;
+      border: none;
+      display: none; /* Mobile only */
+    }
+
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* MOBILE MENU */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+      
+      nav {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background: #6ca0dc;
+        width: 200px;
+        border-radius: 8px;
+        padding: 10px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      }
+      
+      nav a {
+        margin: 0;
+        padding: 12px 15px;
+        display: block;
+      }
+      
+      nav a:hover {
+        background: rgba(255,255,255,0.2);
+      }
+    }
 
     .profile-content {
       display: grid;
@@ -434,14 +499,18 @@
 </head>
 <body>
   <div class="container">
+    <!-- UPDATED HEADER WITH RESPONSIVE NAVIGATION -->
     <header>
       <h1>About Me</h1>
-      <nav>
-        <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('classroom') }}">Classroom</a>
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-      </nav>
+      <div class="navbar">
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <nav id="menu">
+          <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('classroom') }}">Classroom</a>
+          <a href="{{ url_for('index') }}">Home</a>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+      </div>
     </header>
 
     <div class="profile-content">
@@ -695,5 +764,13 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Navigation toggle function
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      menu.style.display = (menu.style.display === "flex" || menu.style.display === "block") ? "none" : "flex";
+    }
+  </script>
 </body>
 </html>

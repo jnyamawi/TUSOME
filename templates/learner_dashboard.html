@@ -64,29 +64,36 @@
 
     /* -------- NAVIGATION FIX -------- */
     .navbar2 {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;   /* pushes hamburger to the FAR RIGHT */
-      align-items: center;
-      position: relative;
-      margin-top: 10px;
+     width: 100%;
+    /*background: #6ca0dc;*/
+    padding: 10px 15px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     }
 
     /* Hamburger Icon */
     .menu-toggle2 {
-      font-size: 30px;
-      color: white;
-      cursor: pointer;
-      display: none; /* visible on mobile only */
-      background: #6ca0dc;
-      border: none;
-      padding: 0;
-    }
+         font-size: 26px;
+    color: white;
+    cursor: pointer;
+    display: none; /* hidden on desktop */
+}
+    
 
     /* Desktop Navigation */
     #menu2 {
-      display: flex;
-      gap: 20px;
+      display: none;
+        flex-direction: column;
+        background: #6ca0dc;
+        position: absolute;
+        top: 55px;
+        right: 15px;
+        width: 180px;
+        border-radius: 8px;
+        padding: 10px 0;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     }
 
     #menu2 a {
@@ -107,25 +114,24 @@
         }
         #menu2 {
             display: none;
-            flex-direction: column;
-            position: absolute;
-            top: 45px;
-            right: 0;
-            width: 100px;
-            background: white;
-            border-radius: 8px;
-            padding: 10px 0;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+        flex-direction: column;
+        background: #6ca0dc;
+        position: absolute;
+        top: 55px;
+        right: 15px;
+        width: 180px;
+        border-radius: 8px;
+        padding: 10px 0;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
         #menu2 a {
-            padding: 12px 15px;
-            color: #0056b3;
-            margin: 0;
-            display: block;
-            text-align: left;
+             padding: 10px 15px;
+        display: block;
+        text-align: left;
+        margin: 0;
         }
         #menu2 a:hover {
-            background: #efefef;
+           background: rgba(255,255,255,0.2);
         }
     }
     /* END NAV UPDATE */

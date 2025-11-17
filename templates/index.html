@@ -2,13 +2,13 @@
 <html lang="{{ request.cookies.get('lang', 'en') }}">
 <head>
   <meta charset="UTF-8">
-   <!-- Makes the webpage scale properly on phones, tablets, laptops -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>{{ _('title') }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
   <style>
-    /* 🌈 BODY BACKGROUND — SMALL REPEATING PATTERN */
+    /* 🌈 BODY BACKGROUND */
     body {
       font-family: Arial, sans-serif;
       background: url("{{ url_for('static', filename='images/BG.jpg') }}") repeat;
@@ -17,7 +17,6 @@
       padding: 0;
     }
 
-    /* Overlay for readability */
     body::before {
       content: '';
       position: fixed;
@@ -37,9 +36,10 @@
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      position: relative;
     }
 
-    /* Language switcher */
+    /* LANGUAGE SWITCHER */
     .lang-switcher {
       position: absolute;
       top: 20px;
@@ -49,6 +49,7 @@
       border-radius: 20px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       font-size: 0.9em;
+      z-index: 10;
     }
     .lang-switcher a {
       margin: 0 6px;
@@ -61,65 +62,113 @@
       text-decoration: underline;
     }
 
-    /* 🎨 Hero Section */
+    /* HEADER (Updated to responsive Movie-Theater style) */
+    header {
+      background: #0056b3;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    /* NAVBAR STRUCTURE */
+    .navbar {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .menu-toggle {
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      margin-left: 15px;
+      display: none; /* Mobile only */
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 15px;
+      font-weight: bold;
+    }
+
+    /* MOBILE MENU */
+    @media (max-width: 768px) {
+
+      .menu-toggle {
+        display: block;
+      }
+
+      nav {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background: #6ca0dc;
+        width: 200px;
+        border-radius: 8px;
+        padding: 10px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      }
+
+      nav a {
+        margin: 0;
+        padding: 12px 15px;
+        display: block;
+      }
+
+      nav a:hover {
+        background: rgba(255,255,255,0.2);
+      }
+    }
+
+    /* HERO */
     .hero {
       background: linear-gradient(135deg, #ffde59, #ff914d);
       color: #333;
       text-align: center;
       padding: 30px 20px;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       margin-bottom: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
+
     .hero h2 {
       font-family: 'Comic Sans MS', 'Comic Neue', cursive;
       font-size: 2.4em;
       margin-bottom: 10px;
     }
+
     .hero p {
       font-size: 1.2em;
       max-width: 600px;
       margin: 0 auto 20px;
     }
+
     .hero img {
       width: 200px;
-      height: auto;
       margin-top: 10px;
       animation: float 3s ease-in-out infinite;
     }
+
     @keyframes float {
       0% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
       100% { transform: translateY(0); }
     }
 
-    /* 🖥️ HEADER STYLING */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #0056b3;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      position: relative; /* so lang-switcher stays inside on small screens */
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.5em;
-      color: white;
-    }
-    header nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 15px;
-    }
-    header nav a:hover {
-      text-decoration: underline;
-    }
-
-    /* CTA Button */
+    /* CTA BUTTON */
     .cta-button {
       display: inline-block;
       padding: 12px 28px;
@@ -129,59 +178,56 @@
       border-radius: 50px;
       font-weight: bold;
       font-size: 1.1em;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       transition: all 0.3s ease;
-      transform: translateY(0);
-    }
-    .cta-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-      background: #ff523d;
     }
 
-    /* Responsive */
-    @media (max-width: 600px) {
-      .lang-switcher {
-        position: static;
-        margin-top: 10px;
-        text-align: center;
-        display: inline-block;
-      }
-      header {
-        flex-direction: column;
-        text-align: center;
-      }
-      header nav {
-        margin-top: 10px;
-      }
+    .cta-button:hover {
+      transform: translateY(-3px);
+      background: #ff523d;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.25);
     }
+
   </style>
 </head>
+
 <body>
-  <!-- Language Switcher -->
+
+  <!-- LANGUAGE SWITCHER -->
   <div class="lang-switcher">
     <a href="{{ url_for('set_lang', lang='en') }}" {% if request.cookies.get('lang', 'en') == 'en' %}class="active"{% endif %}>🇬🇧 English</a> |
     <a href="{{ url_for('set_lang', lang='sw') }}" {% if request.cookies.get('lang', 'en') == 'sw' %}class="active"{% endif %}>🇰🇪 Kiswahili</a>
   </div>
 
   <div class="container">
+
+    <!-- HEADER WITH RESPONSIVE NAV -->
     <header>
       <h1>{{ _('site_name') }}</h1>
-      <nav>
-        {% if current_user.is_authenticated %}
-          <span>{{ _('hi_user', username=current_user.username) }}</span> |
-          {% if current_user.role == 'admin' %}
-            <a href="{{ url_for('admin_dashboard') }}">{{ _('admin_dashboard') }}</a> |
+
+      <div class="navbar">
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+        <nav id="menu">
+          {% if current_user.is_authenticated %}
+            <span style="padding: 12px 15px; display:block;">{{ _('hi_user', username=current_user.username) }}</span>
+
+            {% if current_user.role == 'admin' %}
+              <a href="{{ url_for('admin_dashboard') }}">{{ _('admin_dashboard') }}</a>
+            {% else %}
+              <a href="{{ url_for('learner_dashboard') }}">{{ _('my_dashboard') }}</a>
+            {% endif %}
+
+            <a href="{{ url_for('logout') }}">{{ _('logout') }}</a>
+
           {% else %}
-            <a href="{{ url_for('learner_dashboard') }}">{{ _('my_dashboard') }}</a> |
+            <a href="{{ url_for('login') }}">{{ _('login') }}</a>
           {% endif %}
-          <a href="{{ url_for('logout') }}">{{ _('logout') }}</a>
-        {% else %}
-          <a href="{{ url_for('login') }}">{{ _('login') }}</a>
-        {% endif %}
-      </nav>
+        </nav>
+      </div>
     </header>
 
+    <!-- HERO -->
     <section class="hero">
       <h2>{{ _('welcome') }}</h2>
       <p>{{ _('hero_desc') }}</p>
@@ -193,6 +239,15 @@
         <a href="{{ url_for('register') }}" class="cta-button">{{ _('create_account') }}</a>
       </div>
     </main>
+
   </div>
+
+  <script>
+    function toggleMenu() {
+      let menu = document.getElementById("menu");
+      menu.style.display = (menu.style.display === "flex" || menu.style.display === "block") ? "none" : "flex";
+    }
+  </script>
+
 </body>
 </html>

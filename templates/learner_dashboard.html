@@ -38,19 +38,98 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     }
 
+    /* HEADER WITH NAV */
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       background: #0056b3;
       color: white;
       padding: 10px 20px;
       border-radius: 10px;
       margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
     }
-    h1 { margin: 0; font-size: 1.5em; }
-    a { color: white; text-decoration: none; margin-left: 15px; }
-    a:hover { text-decoration: underline; }
+
+    header p {
+      margin: 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    /* -------- NAVIGATION FIX -------- */
+    .navbar2 {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;   /* pushes hamburger to the FAR RIGHT */
+      align-items: center;
+      position: relative;
+      margin-top: 10px;
+    }
+
+    /* Hamburger Icon */
+    .menu-toggle2 {
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+      display: none; /* visible on mobile only */
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    /* Desktop Navigation */
+    #menu2 {
+      display: flex;
+      gap: 20px;
+    }
+
+    #menu2 a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    #menu2 a:hover {
+      text-decoration: underline;
+    }
+
+    /* Mobile view */
+    @media(max-width: 768px) {
+        .menu-toggle2 {
+            display: block; /* show hamburger */
+        }
+        #menu2 {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 180px;
+            background: white;
+            border-radius: 8px;
+            padding: 10px 0;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+        }
+        #menu2 a {
+            padding: 12px 15px;
+            color: #0056b3;
+            margin: 0;
+            display: block;
+            text-align: left;
+        }
+        #menu2 a:hover {
+            background: #efefef;
+        }
+    }
+    /* END NAV UPDATE */
+
 
     /* 🎮 GRID LAYOUT — ABCmouse Style */
     .grid {
@@ -99,11 +178,12 @@
       z-index: 2;
     }
 
-    /* ✅ COMPLETED STATE */
+    /* Completed Badge */
     .completed {
       border: 3px solid #28a745;
       position: relative;
     }
+
     .completed::after {
       content: "✅ Completed";
       position: absolute;
@@ -118,47 +198,37 @@
       z-index: 3;
     }
 
-    /* 🎨 THEME COLORS - LIGHTER GRADIENTS SO BACKGROUND SHOWS THROUGH */
+    /* Themes */
     .theme-classroom {
-      background: 
-        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+      background:
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
         url("{{ url_for('static', filename='images/classroom.jpg') }}") center/cover;
     }
     
     .theme-about-me {
-      background: 
-        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+      background:
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
         url("{{ url_for('static', filename='images/aboutme.jpg') }}") center/cover;
     }
     
     .theme-movie-theater {
-      background: 
-        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+      background:
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
         url("{{ url_for('static', filename='images/movie.jpg') }}") center/cover;
     }
-    
-    /* Default theme for learning content */
+
     .theme-learning-path {
-      background: 
-        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-        #f39c12,
-        url("{{ url_for('static', filename='images/learning-path.jpg') }}") center/cover;
+      background:
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+        #f39c12;
     }
 
-    /* Card icon styles */
-    .card-icon {
-      font-size: 3rem;
-      margin-bottom: 15px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-
-    /* CARD WITH TITLE BELOW */
     .card-with-title {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    
+
     .card-title {
       margin-top: 10px;
       font-weight: bold;
@@ -174,21 +244,8 @@
       font-size: 0.9em;
     }
 
-    /* SPECIAL CARDS SECTION */
-    .special-section {
-      margin: 30px 0 20px;
-      padding: 15px 0;
-    }
-    
-    .special-section h2 {
-      color: #0056b3;
-      margin-bottom: 15px;
-      font-size: 1.5em;
-      text-align: center;
-    }
-    
     /* Responsive */
-    @media (max-width: 768px) {
+    @media(max-width: 768px) {
       .container {
         margin: 10px;
         padding: 15px;
@@ -201,83 +258,26 @@
         min-height: 180px;
       }
     }
-    /* Second Navbar */
-.navbar2 {
-    width: 100%;
-    background: #6ca0dc;
-    padding: 10px 15px;
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-/* Hamburger Icon */
-.menu-toggle2 {
-    font-size: 26px;
-    color: white;
-    cursor: pointer;
-    display: none; /* hidden on desktop */
-}
-
-/* Desktop menu links */
-#menu2 a {
-    color: white;
-    text-decoration: none;
-    margin: 0 12px;
-    font-weight: bold;
-}
-
-/* ----------- MOBILE VIEW ----------- */
-@media(max-width: 768px) {
-
-    /* Show hamburger icon */
-    .menu-toggle2 {
-        display: block;
-    }
-
-    /* Hide menu until clicked */
-    #menu2 {
-        display: none;
-        flex-direction: column;
-       /* background: #6ca0dc;*/
-        position: absolute;
-        top: 55px;
-        right: 15px;
-        width: 180px;
-        border-radius: 8px;
-        padding: 10px 0;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-    }
-
-    #menu2 a {
-        padding: 12px 15px;
-        display: block;
-        text-align: left;
-        margin: 0;
-    }
-
-    #menu2 a:hover {
-        background: rgba(255,255,255,0.2);
-    }
-}
-
   </style>
 </head>
+
 <body>
   <div class="container">
+    
+    <!-- HEADER WITH UPDATED NAV -->
     <header>
       <p>TUSOME.com</p>
       <h1>Welcome, {{ current_user.username }}</h1>
-     <div class="navbar2">
-    <div class="menu-toggle2" onclick="toggleMenu2()">☰</div>
 
-    <nav id="menu2">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </nav>
-</div>
+      <div class="navbar2">
+          <div class="menu-toggle2" onclick="toggleMenu2()">☰</div>
+
+          <nav id="menu2">
+              <a href="{{ url_for('index') }}">Home</a>
+              <a href="{{ url_for('logout') }}">Logout</a>
+          </nav>
+      </div>
+    </header>
 
 <script>
 function toggleMenu2() {
@@ -286,7 +286,6 @@ function toggleMenu2() {
 }
 </script>
 
-    </header>
 
     <main>
       <!-- 🎯 LEARNING CONTENT GRID -->
@@ -309,14 +308,15 @@ function toggleMenu2() {
       </div>
       {% endif %}
 
+
       <!-- SPECIAL CARDS SECTION -->
       <div class="special-section">
         <h2>Explore Learning Areas</h2>
+
         <div class="grid">
-          <!-- Classroom Card -->
+
           <div class="card-with-title">
             <div class="card theme-classroom" data-url="{{ url_for('classroom') }}">
-              <div class="card-icon"></div>
               <h3>Classroom</h3>
               <p>Educational Materials & Resources</p>
             </div>
@@ -324,48 +324,40 @@ function toggleMenu2() {
             <div class="card-subtitle">Learning Materials</div>
           </div>
 
-          
-          <!-- Movie Theater Card -->
           <div class="card-with-title">
             <div class="card theme-movie-theater" data-url="{{ url_for('movie_theater') }}">
-              <div class="card-icon"></div>
               <h3>Theater</h3>
               <p>Educational Videos & Links</p>
             </div>
             <div class="card-title">Educational Theater</div>
             <div class="card-subtitle">Educational Videos</div>
+          </div>
 
-                 <!-- About Me Card -->
           <div class="card-with-title">
             <div class="card theme-about-me" data-url="{{ url_for('profile') }}">
-              <div class="card-icon"></div>
               <h3>About Me</h3>
               <p>Your Profile & Progress</p>
             </div>
             <div class="card-title">About Me</div>
             <div class="card-subtitle">Your Profile</div>
           </div>
-      
-          </div>
+
         </div>
       </div>
     </main>
   </div>
 
-  <script>
-    // Handle card clicks using data-url attribute
-    document.addEventListener('DOMContentLoaded', function() {
-      const cards = document.querySelectorAll('.card[data-url]');
-      
-      cards.forEach(card => {
-        card.addEventListener('click', function() {
-          const url = this.getAttribute('data-url');
-          if (url && url !== '#') {
-            window.location.href = url;
-          }
-        });
-      });
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = document.querySelectorAll('.card[data-url]');
+  cards.forEach(card => {
+    card.addEventListener('click', function() {
+      const url = this.getAttribute('data-url');
+      if (url) window.location.href = url;
     });
-  </script>
+  });
+});
+</script>
+
 </body>
 </html>

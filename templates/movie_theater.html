@@ -369,7 +369,7 @@
         /* Container */
 .navbar {
     width: 100%;
-    background: #6ca0dc;
+    /*background: #6ca0dc;*/
     padding: 10px 15px;
     position: relative;
     display: flex;
@@ -442,6 +442,14 @@ nav a {
         <a href="{{ url_for('logout') }}">Logout</a>
     </nav>
 </div>
+
+<script>
+function toggleMenu() {
+    const menu = document.getElementById("menu");
+    menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+}
+</script>
+
 
         </header>
 

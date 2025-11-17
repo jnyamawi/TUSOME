@@ -366,17 +366,83 @@
                 justify-content: center;
             }
         }
+        /* Container */
+.navbar {
+    width: 100%;
+    background: #6ca0dc;
+    padding: 10px 15px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Hamburger Icon */
+.menu-toggle {
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+    display: none; /* hidden on desktop */
+}
+
+/* Desktop Menu */
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 12px;
+    font-weight: bold;
+}
+
+/* ---------- MOBILE VIEW ---------- */
+@media(max-width: 768px) {
+
+    /* Show the hamburger icon */
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Hide the menu until clicked */
+    #menu {
+        display: none;
+        flex-direction: column;
+        background: #6ca0dc;
+        position: absolute;
+        top: 55px;
+        right: 15px;
+        width: 180px;
+        border-radius: 8px;
+        padding: 10px 0;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    #menu a {
+        padding: 10px 15px;
+        display: block;
+        text-align: left;
+        margin: 0;
+    }
+
+    #menu a:hover {
+        background: rgba(255,255,255,0.2);
+    }
+}
+
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Educational Theater</h1>
-            <nav>
-                <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
-                <a href="{{ url_for('index') }}">Home</a>
-                <a href="{{ url_for('logout') }}">Logout</a>
-            </nav>
+          <div class="navbar">
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+    <nav id="menu">
+        <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+</div>
+
         </header>
 
         <div class="page-header">

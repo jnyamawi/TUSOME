@@ -201,6 +201,68 @@
         min-height: 180px;
       }
     }
+    /* Second Navbar */
+.navbar2 {
+    width: 100%;
+    background: #6ca0dc;
+    padding: 10px 15px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Hamburger Icon */
+.menu-toggle2 {
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+    display: none; /* hidden on desktop */
+}
+
+/* Desktop menu links */
+#menu2 a {
+    color: white;
+    text-decoration: none;
+    margin: 0 12px;
+    font-weight: bold;
+}
+
+/* ----------- MOBILE VIEW ----------- */
+@media(max-width: 768px) {
+
+    /* Show hamburger icon */
+    .menu-toggle2 {
+        display: block;
+    }
+
+    /* Hide menu until clicked */
+    #menu2 {
+        display: none;
+        flex-direction: column;
+        background: #6ca0dc;
+        position: absolute;
+        top: 55px;
+        right: 15px;
+        width: 180px;
+        border-radius: 8px;
+        padding: 10px 0;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    #menu2 a {
+        padding: 12px 15px;
+        display: block;
+        text-align: left;
+        margin: 0;
+    }
+
+    #menu2 a:hover {
+        background: rgba(255,255,255,0.2);
+    }
+}
+
   </style>
 </head>
 <body>
@@ -208,10 +270,22 @@
     <header>
       <p>TUSOME.com</p>
       <h1>Welcome, {{ current_user.username }}</h1>
-      <nav>
+     <div class="navbar2">
+    <div class="menu-toggle2" onclick="toggleMenu2()">☰</div>
+
+    <nav id="menu2">
         <a href="{{ url_for('index') }}">Home</a>
         <a href="{{ url_for('logout') }}">Logout</a>
-      </nav>
+    </nav>
+</div>
+
+<script>
+function toggleMenu2() {
+    const menu = document.getElementById("menu2");
+    menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+}
+</script>
+
     </header>
 
     <main>
@@ -249,17 +323,7 @@
             <div class="card-title">Classroom</div>
             <div class="card-subtitle">Learning Materials</div>
           </div>
-          
-          <!-- About Me Card -->
-          <div class="card-with-title">
-            <div class="card theme-about-me" data-url="{{ url_for('profile') }}">
-              <div class="card-icon"></div>
-              <h3>About Me</h3>
-              <p>Your Profile & Progress</p>
-            </div>
-            <div class="card-title">About Me</div>
-            <div class="card-subtitle">Your Profile</div>
-          </div>
+
           
           <!-- Movie Theater Card -->
           <div class="card-with-title">
@@ -270,6 +334,18 @@
             </div>
             <div class="card-title">Educational Theater</div>
             <div class="card-subtitle">Educational Videos</div>
+
+                 <!-- About Me Card -->
+          <div class="card-with-title">
+            <div class="card theme-about-me" data-url="{{ url_for('profile') }}">
+              <div class="card-icon"></div>
+              <h3>About Me</h3>
+              <p>Your Profile & Progress</p>
+            </div>
+            <div class="card-title">About Me</div>
+            <div class="card-subtitle">Your Profile</div>
+          </div>
+      
           </div>
         </div>
       </div>

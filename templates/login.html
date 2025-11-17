@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-   <!-- Makes the webpage scale properly on phones, tablets, laptops -->
+  <!-- Makes the webpage scale properly on phones, tablets, laptops -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - TUSOME.com</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -14,7 +14,11 @@
       background-size: 80px 80px;
       margin: 0;
       padding: 0;
-      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     /* ✨ Overlay for readability */
@@ -29,85 +33,103 @@
       z-index: -1;
     }
 
-    /* 📦 Centered container */
-    .container {
-      max-width: 800px; /* Wider to fit image + form */
-      margin: 0 auto;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 30px;
-      flex-wrap: wrap; /* For mobile */
-    }
-
-    /* 💡 Login Form Section */
-    .login-form {
-      background: white;
-      padding: 20px 30px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: left;
-      min-width: 300px;
-      max-width: 350px;
+    /* 📦 Main container */
+    .main-container {
+      width: 100%;
+      max-width: 400px;
+      padding: 15px;
+      box-sizing: border-box;
     }
 
     header {
       background-color: #6ca0dc;
       color: white;
-      padding: 20px;
+      padding: 15px;
       border-bottom: 4px solid #4178be;
       border-radius: 12px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 100%;
       text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.4em;
+    }
+
+    /* 💡 Login Form Section */
+    .login-form {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: left;
+      margin-bottom: 20px;
     }
 
     label {
       font-weight: bold;
       color: #333;
+      font-size: 0.95em;
+      display: block;
+      margin-bottom: 5px;
     }
+
     input {
       width: 100%;
-      padding: 8px;
-      margin: 6px 0 12px;
+      padding: 12px;
+      margin: 0 0 15px 0;
       border: 1px solid #ccc;
-      border-radius: 6px;
-      
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 16px; /* Prevents zoom on iOS */
     }
+
     button {
       background-color: #4caf50;
       color: white;
-      padding: 8px 15px;
+      padding: 12px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 0.95em;
+      font-size: 1em;
       transition: 0.3s;
       width: 100%;
+      font-weight: bold;
     }
+
     button:hover {
       background-color: #45a049;
     }
+
+    .links {
+      text-align: center;
+      margin-top: 15px;
+    }
+
     a {
       color: #0066cc;
       text-decoration: none;
+      font-size: 0.9em;
     }
+
     a:hover {
       text-decoration: underline;
     }
 
     /* Flash messages */
     .flash {
-      display: inline-block;
-      padding: 10px 20px;
+      display: block;
+      padding: 12px 15px;
       border-radius: 8px;
-      margin: 20px auto;
-      max-width: 400px;
+      margin: 0 auto 15px auto;
       font-weight: bold;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
     }
+
     .flash.success { background: #d4edda; color: #155724; }
     .flash.danger  { background: #f8d7da; color: #721c24; }
     .flash.info    { background: #d1ecf1; color: #0c5460; }
@@ -119,16 +141,16 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      max-width: 300px;
-      padding: 5px;
+      padding: 15px;
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      background: white;
     }
 
     .cartoon-img {
-      width: 220px;
+      width: 150px;
       height: auto;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       animation: bounce 2s ease-in-out infinite;
@@ -136,34 +158,74 @@
 
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      50% { transform: translateY(-8px); }
     }
 
     .cartoon-caption {
       font-family: 'Comic Sans MS', cursive;
-      font-size: 1.1em;
+      font-size: 1em;
       color: #333;
-      margin-top: 10px;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        gap: 20px;
+    /* Responsive adjustments for very small screens */
+    @media (max-width: 360px) {
+      .main-container {
+        padding: 10px;
       }
-      .login-form, .cartoon-section {
+      
+      header h1 {
+        font-size: 1.2em;
+      }
+      
+      .login-form {
+        padding: 15px;
+      }
+      
+      input, button {
+        padding: 10px;
+      }
+      
+      .cartoon-img {
+        width: 130px;
+      }
+    }
+
+    /* Desktop adjustments */
+    @media (min-width: 769px) {
+      .main-container {
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .content-wrapper {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
         width: 100%;
-        max-width: 100%;
+        justify-content: center;
+      }
+      
+      .login-form {
+        min-width: 300px;
+        max-width: 350px;
+        margin-bottom: 0;
+      }
+      
+      .cartoon-section {
+        min-width: 250px;
+        max-width: 300px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="main-container">
     <header>
       <h1>Login to TUSOME.com</h1>
     </header>
+    
     <!-- 🔔 FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -174,29 +236,31 @@
       {% endif %}
     {% endwith %}
 
-    <!-- 💡 LOGIN FORM -->
-    <div class="login-form">
-      <form method="post">
-        <label>Username:</label><br>
-        <input type="text" name="username" placeholder="Enter your username" required><br>
+    <div class="content-wrapper">
+      <!-- 💡 LOGIN FORM -->
+      <div class="login-form">
+        <form method="post">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required>
 
-        <label>Password:</label><br>
-        <input type="password" name="password" placeholder="Enter your password" required><br>
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-        <button type="submit">Login</button>
-      </form>
+          <button type="submit">Login</button>
+        </form>
 
-      <p style="margin-top: 20px;">
-        <a href="{{ url_for('register') }}">Create account</a> |
-        <a href="{{ url_for('reset_request') }}">Forgot password?</a>
-      </p>
-    </div>
+        <div class="links">
+          <a href="{{ url_for('register') }}">Create account</a> |
+          <a href="{{ url_for('reset_request') }}">Forgot password?</a>
+        </div>
+      </div>
 
-    <!-- 🐭 CARTOON IMAGE SECTION -->
-    <div class="cartoon-section">
-      <img src="{{ url_for('static', filename='images/mouse.jpg') }}" alt="Friendly Cartoon Mouse" class="cartoon-img">
-      <div class="cartoon-caption">
-        Hi there! Let’s learn together!
+      <!-- 🐭 CARTOON IMAGE SECTION -->
+      <div class="cartoon-section">
+        <img src="{{ url_for('static', filename='images/mouse.jpg') }}" alt="Friendly Cartoon Mouse" class="cartoon-img">
+        <div class="cartoon-caption">
+          Hi there! Let's learn together!
+        </div>
       </div>
     </div>
   </div>
@@ -211,6 +275,14 @@
         setTimeout(() => flash.remove(), 500);
       }
     }, 3000);
+    
+    // Focus on username field when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const usernameField = document.getElementById('username');
+      if (usernameField) {
+        usernameField.focus();
+      }
+    });
   </script>
 </body>
 </html>

@@ -209,13 +209,17 @@
                 <label for="category">Category *</label>
                 <select id="category" name="category" required>
                     <option value="">Select a category</option>
-                    <option value="Stories" {% if video.category == 'Stories' %}selected{% endif %}>Stories</option>
+                    <option value="Kiswahili" {% if video.category == 'Kiswahili' %}selected{% endif %}>Kiswahili</option>
                     <option value="Mathematics" {% if video.category == 'Mathematics' %}selected{% endif %}>Mathematics</option>
-                    <option value="Science" {% if video.category == 'Science' %}selected{% endif %}>Science</option>
-                    <option value="Language" {% if video.category == 'Language' %}selected{% endif %}>Language</option>
-                    <option value="Writing" {% if video.category == 'Writing' %}selected{% endif %}>Writing</option>
-                    <option value="Arts" {% if video.category == 'Arts' %}selected{% endif %}>Arts</option>
+                    <option value="Science and Technology" {% if video.category == 'Science and Technology' %}selected{% endif %}>Science and Technology</option>
+                    <option value="English Language" {% if video.category == 'English Language' %}selected{% endif %}>English Language</option>
+                    <option value="Agriculture and Nutrition" {% if video.category == 'Agriculture and Nutrition' %}selected{% endif %}>Agriculture and Nutrition</option>
+                    <option value="Creative Activities" {% if video.category == 'Creative Activities' %}selected{% endif %}>Creative Activities</option>
                     <option value="Social Studies" {% if video.category == 'Social Studies' %}selected{% endif %}>Social Studies</option>
+                    <option value="Reading and Writing" {% if video.category == 'Reading and Writing' %}selected{% endif %}>Reading and Writing</option>
+                    <option value="Physical and Health Education" {% if video.category == 'Physical and Health Education' %}selected{% endif %}>Physical and Health Education</option>
+                    <option value="Environmental Activities" {% if video.category == 'Environmental Activities' %}selected{% endif %}>Environmental Activities</option>
+                    <option value="Religious Education" {% if video.category == 'Religious Education' %}selected{% endif %}>Religious Education</option>
                 </select>
             </div>
 

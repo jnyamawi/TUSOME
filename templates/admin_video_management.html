@@ -383,7 +383,6 @@
                 <nav id="menu">
                     <a href="{{ url_for('admin_dashboard') }}"> Dashboard</a>
                     <a href="{{ url_for('admin_classroom_materials') }}"> Classroom</a>
-                    <a href="{{ url_for('admin_video_management') }}"> Videos</a>
                     <a href="{{ url_for('index') }}"> Home</a>
                     <a href="{{ url_for('logout') }}"> Logout</a>
                 </nav>
@@ -417,14 +416,7 @@
                 <div class="stat-number">{{ videos|selectattr('is_active', 'equalto', true)|list|length }}</div>
                 <div class="stat-label">Active Videos</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ videos|selectattr('category', 'equalto', 'Programming')|list|length }}</div>
-                <div class="stat-label">Programming Videos</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ videos|selectattr('difficulty_level', 'equalto', 'Beginner')|list|length }}</div>
-                <div class="stat-label">Beginner Level</div>
-            </div>
+            
         </div>
 
         <!-- Search and Filter -->
@@ -437,15 +429,15 @@
                     <option value="all">All Categories</option>
                     <option value="Kiswahili">Kiswahili</option>
                     <option value="Mathematics">Mathematics</option>
-                    <option value="Science">Science</option>
-                    <option value="Language">Language</option>
+                    <option value="Science and Technology">Science and Technology</option>
+                    <option value="English Language">English Language</option>
                     <option value="Reading and Writing">Reading and Writing</option>
-                    <option value="Arts and Music">Arts and Music</option>
+                    <option value="Creative Activities">Creative Activities</option>
                     <option value="Social Studies">Social Studies</option>
-                    <option value="History">History</option>
-                    <option value="Geography">Geography</option>
-                    <option value="Physical Education">Physical Education</option>
-                    <option value="Stories">Stories</option>
+                    <option value="Physical and Health Education">Physical and Health Education</option>
+                    <option value="Agriculture and Nutrition">Agriculture and Nutrition</option>
+                    <option value="Religious Education">Religious Education</option>
+                    <option value="Environmental Activities">Environmental Activities</option>
 
                 </select>
             </div>

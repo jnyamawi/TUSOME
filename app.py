@@ -241,10 +241,10 @@ def delete_content(content_id):
     flash('Content deleted.', 'info')
     return redirect(url_for('admin_dashboard'))
 
-# FILE DOWNLOAD
+# FILE VIEWING (for inline display in browser)
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=False)
 
 # VIEW SINGLE CONTENT (PDFs open inline)
 @app.route('/content/<content_id>')
@@ -506,6 +506,31 @@ def download_classroom_material(material_id):
         download_name=material['original_filename']
     )
 
+@app.route('/classroom/view/<material_id>')
+@login_required
+def view_classroom_material(material_id):
+    """View classroom material directly in browser"""
+    material = mongo.db.classroom_materials.find_one({'_id': ObjectId(material_id)})
+    if not material:
+        abort(404)
+    
+    # For PDFs, images, and videos, we can display them directly
+    file_extension = material.get('file_type', '').lower()
+    
+    # Check if file can be displayed in browser
+    viewable_types = ['pdf', 'png', 'jpg', 'jpeg', 'mp4']
+    
+    if file_extension in viewable_types:
+        file_url = url_for('uploaded_file', filename=material['filename'])
+        return render_template('view_material.html', 
+                             material=material, 
+                             file_url=file_url,
+                             file_type=file_extension)
+    else:
+        # For non-viewable files, redirect to download
+        flash('This file type cannot be viewed directly. Please download it.', 'info')
+        return redirect(url_for('download_classroom_material', material_id=material_id))
+
 # PROFILE ROUTE
 @app.route('/profile')
 @login_required
@@ -569,31 +594,6 @@ def movie_theater():
     videos = list(mongo.db.educational_videos.find({'is_active': True}).sort('created_at', -1))
     return render_template('movie_theater.html', videos=videos)
 
-@app.route('/classroom/view/<material_id>')
-@login_required
-def view_classroom_material(material_id):
-    """View classroom material directly in browser"""
-    material = mongo.db.classroom_materials.find_one({'_id': ObjectId(material_id)})
-    if not material:
-        abort(404)
-    
-    # For PDFs, images, and videos, we can display them directly
-    file_extension = material.get('file_type', '').lower()
-    
-    # Check if file can be displayed in browser
-    viewable_types = ['pdf', 'png', 'jpg', 'jpeg', 'mp4']
-    
-    if file_extension in viewable_types:
-        file_url = url_for('uploaded_file', filename=material['filename'])
-        return render_template('view_material.html', 
-                             material=material, 
-                             file_url=file_url,
-                             file_type=file_extension)
-    else:
-        # For non-viewable files, redirect to download
-        flash('This file type cannot be viewed directly. Please download it.', 'info')
-        return redirect(url_for('download_classroom_material', material_id=material_id))
-    
 # VIDEO MANAGEMENT ROUTES
 @app.route('/admin/video_management')
 @login_required

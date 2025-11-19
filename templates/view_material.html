@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-   <!-- Makes the webpage scale properly on phones, tablets, laptops -->
+  <!-- Makes the webpage scale properly on phones, tablets, laptops -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>View {{ material.title }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -12,11 +12,11 @@
       font-family: Arial, sans-serif;
       background: #f6f8fc;
       margin: 0;
-      padding: 0;
+      padding: 20px;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
       background: white;
       padding: 20px;
@@ -25,6 +25,7 @@
       min-height: 100vh;
     }
 
+    /* UPDATED HEADER WITH RESPONSIVE NAVIGATION - SAME AS CLASSROOM */
     header {
       display: flex;
       justify-content: space-between;
@@ -33,12 +34,76 @@
       color: white;
       padding: 15px 20px;
       border-radius: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      position: relative;
     }
 
-    h1 { margin: 0; font-size: 1.5em; }
-    a { color: white; text-decoration: none; margin-left: 15px; }
-    a:hover { text-decoration: underline; }
+    header h1 { 
+      margin: 0; 
+      font-size: 1.5em; 
+    }
+
+    /* NAVBAR STRUCTURE */
+    .navbar {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .menu-toggle {
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      margin-left: 15px;
+      background: none;
+      border: none;
+      display: none; /* Mobile only */
+    }
+
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* MOBILE MENU */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+      
+      nav {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background: #6ca0dc;
+        width: 200px;
+        border-radius: 8px;
+        padding: 10px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      }
+      
+      nav a {
+        margin: 0;
+        padding: 12px 15px;
+        display: block;
+      }
+      
+      nav a:hover {
+        background: rgba(255,255,255,0.2);
+      }
+    }
 
     .material-header {
       background: #f8f9fa;
@@ -119,6 +184,7 @@
       overflow: hidden;
       background: #f8f9fa;
       min-height: 600px;
+      margin-bottom: 20px;
     }
 
     .pdf-viewer, .image-viewer, .video-viewer {
@@ -217,13 +283,17 @@
 </head>
 <body>
   <div class="container">
+    <!-- UPDATED HEADER WITH RESPONSIVE NAVIGATION - SAME AS CLASSROOM -->
     <header>
       <h1>Document Viewer</h1>
-      <nav>
-        <a href="{{ url_for('classroom') }}">Back to Classroom</a>
-        <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-      </nav>
+      <div class="navbar">
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <nav id="menu">
+          <a href="{{ url_for('classroom') }}">Classroom</a>
+          <a href="{{ url_for('learner_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+      </div>
     </header>
 
     <div class="material-header">
@@ -231,18 +301,19 @@
       <div class="material-meta">
         <span><i class="fas fa-book"></i> {{ material.category|replace('_', ' ')|title }}</span>
         <span><i class="fas fa-graduation-cap"></i> 
-          {% if material.grade_level == 'pre_k' %}Pre-K (3-4)
-          {% elif material.grade_level == 'kindergarten' %}Kindergarten (5-6)
-          {% elif material.grade_level == 'grade_1' %}Grade 1 (6-7)
-          {% elif material.grade_level == 'grade_2' %}Grade 2 (7-8)
-          {% elif material.grade_level == 'grade_3' %}Grade 3 (8-9)
-          {% elif material.grade_level == 'grade_4' %}Grade 4 (9-10)
-          {% elif material.grade_level == 'grade_5' %}Grade 5 (10-11)
+          {% if material.grade_level == 'pre_k' %}Pre-K
+          {% elif material.grade_level == 'kindergarten' %}Kindergarten
+          {% elif material.grade_level == 'grade_1' %}Grade 1
+          {% elif material.grade_level == 'grade_2' %}Grade 2
+          {% elif material.grade_level == 'grade_3' %}Grade 3
+          {% elif material.grade_level == 'grade_4' %}Grade 4
+          {% elif material.grade_level == 'grade_5' %}Grade 5
+          {% elif material.grade_level == 'grade_6' %}Grade 6
           {% else %}All Grades
           {% endif %}
         </span>
         <span><i class="fas fa-file"></i> {{ material.file_type|upper }}</span>
-        <span><i class="fas fa-download"></i> {{ material.download_count }} downloads</span>
+        <!--<span><i class="fas fa-download"></i> {{ material.download_count }} downloads</span> -->
       </div>
       {% if material.description %}
         <div class="material-description">
@@ -258,9 +329,9 @@
       <a href="{{ url_for('classroom') }}" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Back to Classroom
       </a>
-      <button onclick="window.print()" class="btn btn-success">
+      <!--<button onclick="window.print()" class="btn btn-success">
         <i class="fas fa-print"></i> Print
-      </button>
+      </button> -->
     </div>
 
     <div class="viewer-container">
@@ -325,6 +396,12 @@
   </div>
 
   <script>
+    // Navigation toggle function - SAME AS CLASSROOM
+    function toggleMenu() {
+      const menu = document.getElementById("menu");
+      menu.style.display = (menu.style.display === "flex" || menu.style.display === "block") ? "none" : "flex";
+    }
+
     // Auto-resize viewer based on content
     function resizeViewer() {
       const viewer = document.querySelector('.viewer-container');
@@ -341,6 +418,17 @@
     window.addEventListener('message', function(event) {
       if (event.data.type === 'PDF_LOADED') {
         resizeViewer();
+      }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('menu');
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navbar = document.querySelector('.navbar');
+      
+      if (menu.style.display === 'flex' && !navbar.contains(event.target)) {
+        menu.style.display = 'none';
       }
     });
   </script>

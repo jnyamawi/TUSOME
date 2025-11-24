@@ -120,28 +120,28 @@
         {% elif ext in ['txt', 'md', 'csv'] %}
           <iframe src="{{ file_url }}" frameborder="0" style="height:600px;"></iframe>
         {% else %}
-          <p><a href="{{ file_url }}" target="_blank">📂 View or Download File</a></p>
+          <p><a href="{{ file_url }}" target="_blank">View or Download File</a></p>
         {% endif %}
       </div>
 
       <div class="actions">
-        <a href="{{ file_url }}" download class="btn">⬇️ Download</a>
+        <a href="{{ file_url }}" download class="btn">Download</a>
         {% if current_user.role == 'learner' %}
-         <a href="{{ url_for('learner_dashboard') }}" class="btn btn-back">← Back to Dashboard</a>
+         <a href="{{ url_for('learner_dashboard') }}" class="btn btn-back">Back to Dashboard</a>
         {% else %}
-  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-back">← Back to Dashboard</a>
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-back">Back to Dashboard</a>
 {% endif %}
       </div>
     {% else %}
       <p style="text-align:center; margin-top:20px;"><em>No file uploaded for this content.</em></p>
       <div class="actions">
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-back">← Back to Dashboard</a>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-back">Back to Dashboard</a>
       </div>
     {% endif %}
   </div>
 
   <footer>
-    <p>© 2025 KidsLearn e-Learning | Empowering Children 4–10 🌱</p>
+    <p>© 2025 KidsLearn e-Learning | Empowering Children 4–10</p>
   </footer>
 </body>
 </html>

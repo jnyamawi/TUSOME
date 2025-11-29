@@ -343,7 +343,7 @@
         <div class="grid">
 
           <a href="{{ url_for('classroom') }}" class="card-with-title">
-            <div class="card theme-classroom">
+            <div class="card theme-classroom" data-en="go to the classroom">
               <!-- Text content wrapped in a div that gets hidden -->
               <div class="card-content">
                 <h3>Classroom</h3>
@@ -357,7 +357,7 @@
           </a>
 
           <a href="{{ url_for('movie_theater') }}" class="card-with-title">
-            <div class="card theme-movie-theater">
+            <div class="card theme-movie-theater"  data-en="go to the educational theater">
               <!-- Text content wrapped in a div that gets hidden -->
               <div class="card-content">
                 <h3>Theater</h3>
@@ -371,7 +371,7 @@
           </a>
 
           <a href="{{ url_for('profile') }}" class="card-with-title">
-            <div class="card theme-about-me">
+            <div class="card theme-about-me"  data-en="go to my profile">
               <!-- Text content wrapped in a div that gets hidden -->
               <div class="card-content">
                 <h3>About Me</h3>
@@ -395,7 +395,113 @@
       const menu = document.getElementById("menu");
       menu.style.display = (menu.style.display === "flex" || menu.style.display === "block") ? "none" : "flex";
     }
-  </script>
 
+    // ================================
+    //  SPEECH SYSTEM
+    // ================================
+
+    let soundEnabled = true;
+    let currentLanguage = 'en';
+    let selectedVoice = null;
+
+    // These elements may not exist on this page, so we check safely
+    const languageSelector = document.getElementById('language');
+    const voiceSelect = document.getElementById('voice-select');
+    const soundToggle = document.getElementById('sound-toggle');
+
+    // Load available voices
+    function loadVoices() {
+      const voices = window.speechSynthesis.getVoices();
+
+      if (voiceSelect) {
+        voiceSelect.innerHTML = '<option value="auto">Auto-Select</option>';
+
+        voices.forEach(voice => {
+          const option = document.createElement('option');
+          option.value = voice.name;
+          option.textContent = `${voice.name} (${voice.lang})`;
+          voiceSelect.appendChild(option);
+        });
+      }
+    }
+
+    // Detect browser language
+    function detectLanguage() {
+      const browserLang = navigator.language.split('-')[0];
+      if (browserLang === 'sw') {
+        currentLanguage = 'sw';
+        if (languageSelector) languageSelector.value = 'sw';
+      }
+    }
+
+    // Speak text with selected or auto-detected voice
+    function speak(text) {
+      if (!soundEnabled || !text) return;
+
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voices = window.speechSynthesis.getVoices();
+
+      // Manual voice selection
+      if (selectedVoice && selectedVoice !== 'auto') {
+        utterance.voice = voices.find(v => v.name === selectedVoice) || voices[0];
+      } 
+      else {
+        // Auto voice selection based on language
+        const langVoices = voices.filter(v => v.lang.startsWith(currentLanguage));
+        utterance.voice = langVoices[0] || voices[0];
+      }
+
+      utterance.rate = 1.35;
+      utterance.pitch = 2.1;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // ================================
+    //  EVENT LISTENERS
+    // ================================
+
+    // Language selector
+    if (languageSelector) {
+      languageSelector.addEventListener('change', (e) => {
+        currentLanguage = e.target.value;
+      });
+    }
+
+    // Voice selector
+    if (voiceSelect) {
+      voiceSelect.addEventListener('change', (e) => {
+        selectedVoice = e.target.value === 'auto' ? null : e.target.value;
+      });
+    }
+
+    // Sound on/off
+    if (soundToggle) {
+      soundToggle.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundToggle.textContent = `🔊 Sound: ${soundEnabled ? 'ON' : 'OFF'}`;
+      });
+    }
+
+    // ================================================
+    //  ENABLE AUDIO FOR CARDS WITH data-en="..."
+    // ================================================
+    const speakingCards = document.querySelectorAll('.card[data-en]');
+
+    speakingCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        const text = card.dataset.en;
+        speak(text);
+      });
+    });
+
+    // Initialize
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+    detectLanguage();
+
+  </script>
 </body>
 </html>

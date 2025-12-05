@@ -22,9 +22,10 @@ from itsdangerous import URLSafeTimedSerializer
 # ----------------------------
 app = Flask(__name__)
 
-# --- File upload settings ---
-#Get the Render URL from environment or use the actual URL
+# Get the Render URL from environment or use the actual URL
 app.config['BASE_URL'] = os.environ.get('BASE_URL', 'https://tusome-guhv.onrender.com')
+
+# --- File upload settings ---
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = {
     'pdf', 'docx', 'txt', 'png', 'jpg', 'jpeg', 'mp4', 'zip'
@@ -152,6 +153,11 @@ def validate_username(username):
         errors.append("Username contains inappropriate content")
     
     return errors
+
+def generate_reset_link(token):
+    """Generate password reset link with correct base URL"""
+    base_url = app.config['BASE_URL']
+    return f"{base_url}/reset/{token}"
 
 # ----------------------------
 # ROUTES
@@ -446,7 +452,7 @@ def mark_completed(content_id):
     )
     return jsonify({'message': 'Progress saved!'})
 
-# PASSWORD RESET REQUEST
+# PASSWORD RESET REQUEST - UPDATED FOR RENDER DEPLOYMENT
 @app.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
     if request.method == 'POST':
@@ -454,11 +460,87 @@ def reset_request():
         user_doc = mongo.db.users.find_one({'email': email})
         if user_doc:
             token = serializer.dumps(str(user_doc['_id']))
-            link = url_for('reset_token', token=token, _external=True)
-            msg = Message('Password Reset Request', recipients=[email])
-            msg.body = f'Click the link to reset your password: {link}\nIf you did not request this, ignore.'
-            mail.send(msg)
-        flash('If that email exists, a reset link has been sent.', 'info')
+            
+            # Use the configured BASE_URL for Render deployment
+            link = generate_reset_link(token)
+            
+            msg = Message('Password Reset Request - TUSOME.com', recipients=[email])
+            
+            # Plain text version
+            msg.body = f'''Password Reset Request - TUSOME.com
+
+Hello,
+
+You requested to reset your password for TUSOME.com.
+
+Click this link to reset your password:
+{link}
+
+This link will expire in 1 hour.
+
+If you didn't request this, please ignore this email.
+
+Thank you,
+TUSOME.com Team'''
+            
+            # HTML version
+            msg.html = f'''
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background: #0056b3; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }}
+                    .content {{ background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }}
+                    .button {{ display: inline-block; background: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; }}
+                    .footer {{ margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>TUSOME.com</h2>
+                        <p>Password Reset Request</p>
+                    </div>
+                    <div class="content">
+                        <p>Hello,</p>
+                        <p>You requested to reset your password for <strong>TUSOME.com</strong>.</p>
+                        
+                        <p style="text-align: center; margin: 30px 0;">
+                            <a href="{link}" class="button">Reset My Password</a>
+                        </p>
+                        
+                        <p>Or copy and paste this link in your browser:</p>
+                        <p style="background: #e9ecef; padding: 10px; border-radius: 5px; word-break: break-all;">
+                            {link}
+                        </p>
+                        
+                        <p><strong>Important:</strong> This link will expire in 1 hour.</p>
+                        
+                        <p>If you didn't request a password reset, you can safely ignore this email.</p>
+                        
+                        <div class="footer">
+                            <p>Best regards,<br>
+                            <strong>TUSOME.com Team</strong><br>
+                            Interactive E-Learning Platform for Kids</p>
+                            <p>Need help? Contact us at: jnyamawi@kabarak.ac.ke</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            '''
+            
+            try:
+                mail.send(msg)
+                flash('Password reset link has been sent to your email. Please check your inbox (and spam folder).', 'success')
+            except Exception as e:
+                print(f"Error sending email: {e}")
+                flash('Error sending email. Please try again later.', 'danger')
+        else:
+            # For security, show same message even if email doesn't exist
+            flash('If that email exists in our system, a password reset link has been sent.', 'info')
         return redirect(url_for('login'))
     return render_template('reset_request.html')
 
@@ -484,6 +566,18 @@ def reset_token(token):
         return redirect(url_for('login'))
 
     return render_template('reset_token.html')
+
+# CONFIGURATION TEST ROUTE
+@app.route('/config-test')
+def config_test():
+    """Test route to verify configuration"""
+    config_info = {
+        'app_url': app.config['BASE_URL'],
+        'in_production': 'RENDER' in os.environ,
+        'email_configured': bool(app.config['MAIL_USERNAME']),
+        'reset_link_example': generate_reset_link('test-token-123')
+    }
+    return jsonify(config_info)
 
 # ADMIN CREATION HELPER
 def create_admin(username, email, password):

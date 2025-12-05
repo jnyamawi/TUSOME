@@ -195,6 +195,118 @@
       margin-bottom: 3px;
     }
 
+    /* Username checking styles */
+    .username-status {
+      margin-top: 5px;
+      font-size: 0.85em;
+      padding: 5px 8px;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .username-checking {
+      color: #6c757d;
+      background-color: #f8f9fa;
+    }
+
+    .username-available {
+      color: #28a745;
+      background-color: #d4edda;
+    }
+
+    .username-taken {
+      color: #dc3545;
+      background-color: #f8d7da;
+    }
+
+    .username-invalid {
+      color: #dc3545;
+      background-color: #f8d7da;
+    }
+
+    /* Username suggestions */
+    .username-suggestions {
+      background: #e9ecef;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      border-left: 4px solid #6ca0dc;
+    }
+
+    .suggestions-title {
+      font-weight: bold;
+      color: #495057;
+      margin-bottom: 8px;
+      font-size: 0.9em;
+    }
+
+    .suggestion-item {
+      display: inline-block;
+      margin: 5px;
+      padding: 6px 12px;
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.85em;
+    }
+
+    .suggestion-item:hover {
+      background: #6ca0dc;
+      color: white;
+      border-color: #6ca0dc;
+    }
+
+    /* Real-time checking indicators */
+    .checking-indicator {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6c757d;
+      display: none;
+    }
+
+    .checking-indicator.active {
+      display: block;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: translateY(-50%) rotate(0deg); }
+      100% { transform: translateY(-50%) rotate(360deg); }
+    }
+
+    /* Email checking status */
+    .email-status {
+      margin-top: 5px;
+      font-size: 0.85em;
+      padding: 5px 8px;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .email-checking {
+      color: #6c757d;
+      background-color: #f8f9fa;
+    }
+
+    .email-available {
+      color: #28a745;
+      background-color: #d4edda;
+    }
+
+    .email-taken {
+      color: #dc3545;
+      background-color: #f8d7da;
+    }
+
+    .email-invalid {
+      color: #dc3545;
+      background-color: #f8d7da;
+    }
+
     /* 🐭 Cartoon Image Section */
     .cartoon-section {
       display: flex;
@@ -257,6 +369,10 @@
         height: 20px;
         width: 20px;
       }
+      
+      .checking-indicator {
+        right: 35px;
+      }
     }
 
     /* Tablet adjustments */
@@ -312,47 +428,82 @@
       {% endif %}
     {% endwith %}
 
+    <!-- Username Error from Backend with Suggestions -->
+    {% if error and suggestions %}
+      <div class="username-suggestions">
+        <div class="suggestions-title">{{ error }}</div>
+        {% for suggestion in suggestions %}
+          <span class="suggestion-item" onclick="useSuggestion('{{ suggestion }}')">
+            {{ suggestion }}
+          </span>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <div class="content-wrapper">
       <!-- 💡 REGISTRATION FORM -->
       <div class="register-form">
-        <form method="post">
+        <form method="post" id="registerForm">
           <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Choose a username" required>
+            <input type="text" id="username" name="username" 
+                   placeholder="Choose a username" 
+                   value="{{ original_username if original_username else '' }}"
+                   required
+                   oninput="checkUsernameAvailability(this.value)">
+            <div class="checking-indicator" id="usernameChecking">
+              <i class="fas fa-spinner"></i>
+            </div>
+            <div class="username-status" id="usernameStatus"></div>
           </div>
 
           <div class="form-group">
             <label for="email">Email Address:</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <input type="email" id="email" name="email" 
+                   placeholder="Enter your email" 
+                   value="{{ email if email else '' }}"
+                   required
+                   oninput="checkEmailAvailability(this.value)">
+            <div class="checking-indicator" id="emailChecking">
+              <i class="fas fa-spinner"></i>
+            </div>
+            <div class="email-status" id="emailStatus"></div>
           </div>
 
           <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Create a password" required>
+            <input type="password" id="password" name="password" 
+                   placeholder="Create a password" 
+                   required
+                   minlength="6"
+                   oninput="validatePassword(this.value)">
             <button type="button" class="password-toggle" id="passwordToggle" aria-label="Show password">
               <i class="fas fa-eye"></i>
             </button>
             
             <div class="password-requirements">
-              <strong>Password should include:</strong>
+              <strong>Password requirements:</strong>
               <ul>
-                <li>At least 8 characters</li>
-                <li>One uppercase letter</li>
-                <li>One number</li>
-                <li>One special character</li>
+                <li id="lengthReq">At least 6 characters</li>
+                <li id="strengthReq">Password strength: <span id="passwordStrength">Weak</span></li>
               </ul>
             </div>
           </div>
 
           <div class="form-group">
             <label for="confirm_password">Confirm Password:</label>
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
+            <input type="password" id="confirm_password" name="confirm_password" 
+                   placeholder="Repeat your password" 
+                   required
+                   oninput="validatePasswordMatch()">
             <button type="button" class="password-toggle" id="confirmPasswordToggle" aria-label="Show confirm password">
               <i class="fas fa-eye"></i>
             </button>
+            <div class="username-status" id="passwordMatchStatus"></div>
           </div>
 
-          <button type="submit" style="font-family: Arial, sans-serif; font-weight:600;">Create Account</button>
+          <button type="submit" style="font-family: Arial, sans-serif; font-weight:600;" 
+                  id="submitBtn" disabled>Create Account</button>
         </form>
 
         <div class="links">
@@ -364,7 +515,7 @@
       <div class="cartoon-section">
         <img src="{{ url_for('static', filename='images/mouse.jpg') }}" alt="Friendly Cartoon Mouse" class="cartoon-img">
         <div class="cartoon-caption" style="font-family: Arial, sans-serif; font-weight:600;">
-          Welcome to TUSOME!<br>Let's start learning together!
+          Welcome to TUSOME!<br> Register to start your learning adventure
         </div>
       </div>
     </div>
@@ -374,6 +525,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <script>
+    let usernameCheckTimeout;
+    let emailCheckTimeout;
+    let isUsernameValid = false;
+    let isEmailValid = false;
+    let isPasswordValid = false;
+    let doPasswordsMatch = false;
+
     // Auto-hide flash message after 3 seconds
     setTimeout(() => {
       const flash = document.getElementById("flash-message");
@@ -390,23 +548,272 @@
       if (usernameField) {
         usernameField.focus();
       }
+      updateSubmitButton();
     });
 
-    // Password confirmation validation
-    document.addEventListener('DOMContentLoaded', function() {
-      const password = document.getElementById('password');
-      const confirmPassword = document.getElementById('confirm_password');
+    // Real-time username availability checking
+    function checkUsernameAvailability(username) {
+      clearTimeout(usernameCheckTimeout);
       
-      function validatePassword() {
-        if (password.value !== confirmPassword.value) {
-          confirmPassword.setCustomValidity("Passwords don't match");
-        } else {
-          confirmPassword.setCustomValidity('');
-        }
+      const usernameStatus = document.getElementById('usernameStatus');
+      const checkingIndicator = document.getElementById('usernameChecking');
+      
+      if (username.length < 3) {
+        usernameStatus.innerHTML = 'Username must be at least 3 characters';
+        usernameStatus.className = 'username-status username-invalid';
+        usernameStatus.style.display = 'block';
+        checkingIndicator.classList.remove('active');
+        isUsernameValid = false;
+        updateSubmitButton();
+        return;
       }
       
-      password.addEventListener('change', validatePassword);
-      confirmPassword.addEventListener('keyup', validatePassword);
+      if (username.length > 30) {
+        usernameStatus.innerHTML = 'Username cannot exceed 30 characters';
+        usernameStatus.className = 'username-status username-invalid';
+        usernameStatus.style.display = 'block';
+        checkingIndicator.classList.remove('active');
+        isUsernameValid = false;
+        updateSubmitButton();
+        return;
+      }
+      
+      // Show checking indicator
+      usernameStatus.innerHTML = 'Checking availability...';
+      usernameStatus.className = 'username-status username-checking';
+      usernameStatus.style.display = 'block';
+      checkingIndicator.classList.add('active');
+      isUsernameValid = false;
+      updateSubmitButton();
+      
+      usernameCheckTimeout = setTimeout(() => {
+        fetch('/api/check-username?username=' + encodeURIComponent(username))
+          .then(response => response.json())
+          .then(data => {
+            checkingIndicator.classList.remove('active');
+            
+            if (data.available) {
+              usernameStatus.innerHTML = '✓ Username is available!';
+              usernameStatus.className = 'username-status username-available';
+              usernameStatus.style.display = 'block';
+              isUsernameValid = true;
+              
+              // Remove any existing suggestions
+              const suggestionsDiv = document.querySelector('.username-suggestions');
+              if (suggestionsDiv) {
+                suggestionsDiv.remove();
+              }
+            } else {
+              usernameStatus.innerHTML = '✗ ' + data.message;
+              usernameStatus.className = 'username-status username-taken';
+              usernameStatus.style.display = 'block';
+              isUsernameValid = false;
+              
+              // Show suggestions if available
+              if (data.suggestions && data.suggestions.length > 0) {
+                showSuggestions(data.suggestions, username);
+              }
+            }
+            updateSubmitButton();
+          })
+          .catch(error => {
+            checkingIndicator.classList.remove('active');
+            usernameStatus.innerHTML = 'Error checking username';
+            usernameStatus.className = 'username-status username-invalid';
+            usernameStatus.style.display = 'block';
+            isUsernameValid = false;
+            updateSubmitButton();
+            console.error('Error:', error);
+          });
+      }, 500); // Wait 500ms after user stops typing
+    }
+
+    // Real-time email availability checking
+    function checkEmailAvailability(email) {
+      clearTimeout(emailCheckTimeout);
+      
+      const emailStatus = document.getElementById('emailStatus');
+      const checkingIndicator = document.getElementById('emailChecking');
+      
+      // Basic email validation
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        emailStatus.innerHTML = 'Please enter a valid email address';
+        emailStatus.className = 'email-status email-invalid';
+        emailStatus.style.display = 'block';
+        checkingIndicator.classList.remove('active');
+        isEmailValid = false;
+        updateSubmitButton();
+        return;
+      }
+      
+      // Show checking indicator
+      emailStatus.innerHTML = 'Checking availability...';
+      emailStatus.className = 'email-status email-checking';
+      emailStatus.style.display = 'block';
+      checkingIndicator.classList.add('active');
+      isEmailValid = false;
+      updateSubmitButton();
+      
+      emailCheckTimeout = setTimeout(() => {
+        fetch('/api/check-email?email=' + encodeURIComponent(email))
+          .then(response => response.json())
+          .then(data => {
+            checkingIndicator.classList.remove('active');
+            
+            if (data.available) {
+              emailStatus.innerHTML = '✓ Email is available!';
+              emailStatus.className = 'email-status email-available';
+              emailStatus.style.display = 'block';
+              isEmailValid = true;
+            } else {
+              emailStatus.innerHTML = '✗ ' + data.message;
+              emailStatus.className = 'email-status email-taken';
+              emailStatus.style.display = 'block';
+              isEmailValid = false;
+            }
+            updateSubmitButton();
+          })
+          .catch(error => {
+            checkingIndicator.classList.remove('active');
+            emailStatus.innerHTML = 'Error checking email';
+            emailStatus.className = 'email-status email-invalid';
+            emailStatus.style.display = 'block';
+            isEmailValid = false;
+            updateSubmitButton();
+            console.error('Error:', error);
+          });
+      }, 500);
+    }
+
+    // Show username suggestions
+    function showSuggestions(suggestions, originalUsername) {
+      // Remove existing suggestions div
+      const existingSuggestions = document.querySelector('.username-suggestions');
+      if (existingSuggestions) {
+        existingSuggestions.remove();
+      }
+      
+      // Create new suggestions div
+      const suggestionsDiv = document.createElement('div');
+      suggestionsDiv.className = 'username-suggestions';
+      suggestionsDiv.innerHTML = `
+        <div class="suggestions-title">Try one of these available usernames:</div>
+        ${suggestions.map(suggestion => 
+          `<span class="suggestion-item" onclick="useSuggestion('${suggestion}')">${suggestion}</span>`
+        ).join('')}
+      `;
+      
+      // Insert after flash messages or header
+      const flashMessage = document.getElementById('flash-message');
+      if (flashMessage) {
+        flashMessage.after(suggestionsDiv);
+      } else {
+        const header = document.querySelector('header');
+        header.after(suggestionsDiv);
+      }
+    }
+
+    // Use suggested username
+    function useSuggestion(username) {
+      document.getElementById('username').value = username;
+      checkUsernameAvailability(username);
+      
+      // Remove suggestions div
+      const suggestionsDiv = document.querySelector('.username-suggestions');
+      if (suggestionsDiv) {
+        suggestionsDiv.remove();
+      }
+    }
+
+    // Password validation
+    function validatePassword(password) {
+      const lengthReq = document.getElementById('lengthReq');
+      const strengthSpan = document.getElementById('passwordStrength');
+      const passwordMatchStatus = document.getElementById('passwordMatchStatus');
+      const confirmPassword = document.getElementById('confirm_password');
+      
+      // Check length
+      if (password.length >= 6) {
+        lengthReq.style.color = '#28a745';
+        isPasswordValid = true;
+      } else {
+        lengthReq.style.color = '#dc3545';
+        isPasswordValid = false;
+      }
+      
+      // Calculate password strength
+      let strength = 0;
+      if (password.length >= 8) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+      
+      const strengthText = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'][strength];
+      const strengthColors = ['#dc3545', '#dc3545', '#ffc107', '#28a745', '#28a745'];
+      
+      strengthSpan.textContent = strengthText;
+      strengthSpan.style.color = strengthColors[strength];
+      
+      // Update password match status
+      if (confirmPassword.value) {
+        validatePasswordMatch();
+      }
+      
+      updateSubmitButton();
+    }
+
+    // Validate password match
+    function validatePasswordMatch() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm_password').value;
+      const passwordMatchStatus = document.getElementById('passwordMatchStatus');
+      
+      if (!confirmPassword) {
+        passwordMatchStatus.style.display = 'none';
+        doPasswordsMatch = false;
+      } else if (password === confirmPassword) {
+        passwordMatchStatus.innerHTML = '✓ Passwords match';
+        passwordMatchStatus.className = 'username-status username-available';
+        passwordMatchStatus.style.display = 'block';
+        doPasswordsMatch = true;
+      } else {
+        passwordMatchStatus.innerHTML = '✗ Passwords do not match';
+        passwordMatchStatus.className = 'username-status username-taken';
+        passwordMatchStatus.style.display = 'block';
+        doPasswordsMatch = false;
+      }
+      
+      updateSubmitButton();
+    }
+
+    // Update submit button state
+    function updateSubmitButton() {
+      const submitBtn = document.getElementById('submitBtn');
+      const isFormValid = isUsernameValid && isEmailValid && isPasswordValid && doPasswordsMatch;
+      
+      submitBtn.disabled = !isFormValid;
+      submitBtn.style.opacity = isFormValid ? '1' : '0.6';
+      submitBtn.style.cursor = isFormValid ? 'pointer' : 'not-allowed';
+    }
+
+    // Form submission validation
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      if (!isUsernameValid || !isEmailValid || !isPasswordValid || !doPasswordsMatch) {
+        e.preventDefault();
+        alert('Please fix all errors before submitting.');
+        return;
+      }
+      
+      // Additional validation before submit
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm_password').value;
+      
+      if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('Passwords do not match.');
+        return;
+      }
     });
 
     // Password visibility toggle for password field

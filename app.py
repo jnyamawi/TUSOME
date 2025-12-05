@@ -1,5 +1,6 @@
 import os
 import re
+import random
 from datetime import datetime, UTC
 from bson.objectid import ObjectId
 from flask import (
@@ -92,6 +93,64 @@ def extract_youtube_id(url):
     
     return None
 
+def generate_username_suggestions(username):
+    """Generate smart username suggestions when username is taken"""
+    suggestions = []
+    base_username = re.sub(r'\s+', '', username).lower()
+    
+    # Generate variations
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+    
+    variations = [
+        f"{base_username}{random.randint(100, 999)}",
+        f"{base_username}{current_year}",
+        f"{base_username}{random.randint(1, 99)}",
+        f"{base_username}_{random.randint(10, 99)}",
+        f"learn_{base_username}",
+        f"edu_{base_username}",
+        f"{base_username}_student",
+        f"{base_username}_learner",
+        f"{base_username}{random.choice(['x', 'z', 'y'])}",
+        f"{base_username}{current_month:02d}{random.randint(10, 99)}"
+    ]
+    
+    # Remove duplicates and limit to 5 suggestions
+    seen = set()
+    for suggestion in variations:
+        if suggestion not in seen:
+            seen.add(suggestion)
+            suggestions.append(suggestion)
+        if len(suggestions) >= 5:
+            break
+    
+    return suggestions
+
+def validate_username(username):
+    """Validate username against rules"""
+    errors = []
+    
+    if len(username) < 3:
+        errors.append("Username must be at least 3 characters long")
+    if len(username) > 30:
+        errors.append("Username cannot exceed 30 characters")
+    
+    # Check for allowed characters
+    if not re.match(r'^[a-zA-Z0-9._-]+$', username):
+        errors.append("Username can only contain letters, numbers, dots, underscores, and hyphens")
+    
+    # Check for reserved usernames
+    reserved = ['admin', 'root', 'system', 'administrator', 'moderator', 'superuser']
+    if username.lower() in reserved:
+        errors.append("This username is not allowed")
+    
+    # Check for offensive patterns (simplified)
+    offensive_patterns = ['badword1', 'badword2']  # Add your own list
+    if any(pattern in username.lower() for pattern in offensive_patterns):
+        errors.append("Username contains inappropriate content")
+    
+    return errors
+
 # ----------------------------
 # ROUTES
 # ----------------------------
@@ -102,29 +161,126 @@ def index():
     contents = list(mongo.db.contents.find().sort('created_at', -1))
     return render_template('index.html', contents=contents)
 
-# REGISTER (LEARNERS)
+# REGISTER (LEARNERS) - UPDATED WITH ENHANCED USERNAME CHECKING
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
+        username = request.form['username'].strip()
+        email = request.form['email'].strip().lower()
         password = request.form['password']
-
-        if mongo.db.users.find_one({'username': username}):
-            flash('Username already exists', 'danger')
+        
+        # Validate username
+        validation_errors = validate_username(username)
+        if validation_errors:
+            for error in validation_errors:
+                flash(error, 'danger')
             return redirect(url_for('register'))
-
+        
+        # Check if username exists
+        existing_user = mongo.db.users.find_one({'username': username})
+        if existing_user:
+            # Generate suggestions
+            suggestions = generate_username_suggestions(username)
+            
+            # Return to registration page with suggestions
+            return render_template('register.html',
+                                   error="Username already exists. Try one of these:",
+                                   suggestions=suggestions,
+                                   original_username=username,
+                                   email=email)
+        
+        # Check if email exists
+        existing_email = mongo.db.users.find_one({'email': email})
+        if existing_email:
+            flash('Email already registered. Please login or use another email.', 'danger')
+            return render_template('register.html')
+        
+        # Validate password
+        if len(password) < 6:
+            flash('Password must be at least 6 characters long', 'danger')
+            return render_template('register.html', username=username, email=email)
+        
+        # Create new user
         hashed = generate_password_hash(password)
-        mongo.db.users.insert_one({
+        user_data = {
             'username': username,
             'email': email,
             'password': hashed,
             'role': 'learner',
-            'created_at': datetime.now(UTC)
-        })
+            'created_at': datetime.now(UTC),
+            'last_login': None,
+            'profile_complete': False
+        }
+        
+        # Insert into database
+        mongo.db.users.insert_one(user_data)
         flash('Registration successful! Please log in.', 'success')
         return redirect(url_for('login'))
+    
     return render_template('register.html')
+
+# API endpoint for real-time username checking
+@app.route('/api/check-username', methods=['GET'])
+def check_username():
+    """API endpoint for real-time username availability checking"""
+    username = request.args.get('username', '').strip()
+    
+    if len(username) < 3:
+        return jsonify({
+            'available': False,
+            'message': 'Username too short (minimum 3 characters)'
+        })
+    
+    # Validate username
+    validation_errors = validate_username(username)
+    if validation_errors:
+        return jsonify({
+            'available': False,
+            'message': validation_errors[0]
+        })
+    
+    # Check if username exists
+    existing_user = mongo.db.users.find_one({'username': username})
+    
+    if existing_user:
+        suggestions = generate_username_suggestions(username)
+        return jsonify({
+            'available': False,
+            'message': 'Username already taken',
+            'suggestions': suggestions
+        })
+    
+    return jsonify({
+        'available': True,
+        'message': 'Username is available!'
+    })
+
+# API endpoint for real-time email checking
+@app.route('/api/check-email', methods=['GET'])
+def check_email():
+    """API endpoint for real-time email availability checking"""
+    email = request.args.get('email', '').strip().lower()
+    
+    # Basic email validation
+    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+        return jsonify({
+            'available': False,
+            'message': 'Invalid email format'
+        })
+    
+    # Check if email exists
+    existing_email = mongo.db.users.find_one({'email': email})
+    
+    if existing_email:
+        return jsonify({
+            'available': False,
+            'message': 'Email already registered'
+        })
+    
+    return jsonify({
+        'available': True,
+        'message': 'Email is available'
+    })
 
 # LOGIN (ADMIN + LEARNER)
 @app.route('/login', methods=['GET', 'POST'])
@@ -137,6 +293,13 @@ def login():
         if user_doc and check_password_hash(user_doc['password'], password):
             user = User(user_doc)
             login_user(user)
+            
+            # Update last login
+            mongo.db.users.update_one(
+                {'_id': ObjectId(user_doc['_id'])},
+                {'$set': {'last_login': datetime.now(UTC)}}
+            )
+            
             flash('Logged in successfully!', 'success')
 
             if user.role == 'admin':

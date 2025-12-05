@@ -510,7 +510,7 @@
         <button class="filter-btn" data-category="Agriculture and Nutrition"
         style="font-family: Arial, sans-serif; font-weight:600;">Agriculture and Nutrition</button>
 
-        <button class="filter-btn" data-category="Religious Education "
+        <button class="filter-btn" data-category="Religious Education"
         style="font-family: Arial, sans-serif; font-weight:600;">Religious Education</button>
 
     </div>
@@ -556,6 +556,14 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Debug Info (Optional - can be removed in production) -->
+        <div class="debug-info" style="display: none;">
+            <h4>Debug Info - Video Categories:</h4>
+            {% for video in videos %}
+                <p>Video: {{ video.title }} | Category: "{{ video.category }}"</p>
             {% endfor %}
         </div>
         {% else %}
@@ -631,8 +639,9 @@
                 });
                 this.classList.add('active');
                 
-                // Get selected category
-                currentCategory = this.getAttribute('data-category');
+                // Get selected category (with trim to remove any whitespace)
+                currentCategory = this.getAttribute('data-category').trim();
+                console.log('Selected category:', currentCategory);
                 
                 // Filter videos
                 filterVideos();
@@ -641,22 +650,50 @@
 
         function filterVideos() {
             const videoCards = document.querySelectorAll('.video-card');
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            console.log('Filtering with category:', currentCategory, 'search:', searchTerm);
+            
+            let visibleCount = 0;
             
             videoCards.forEach(card => {
-                const category = card.getAttribute('data-category');
-                const title = card.getAttribute('data-title').toLowerCase();
-                const description = card.getAttribute('data-description').toLowerCase();
+                const category = card.getAttribute('data-category').trim();
+                const title = card.getAttribute('data-title').toLowerCase().trim();
+                const description = card.getAttribute('data-description').toLowerCase().trim();
                 
                 const categoryMatch = currentCategory === 'all' || category === currentCategory;
-                const searchMatch = title.includes(searchTerm) || description.includes(searchTerm);
+                const searchMatch = !searchTerm || title.includes(searchTerm) || description.includes(searchTerm);
                 
                 if (categoryMatch && searchMatch) {
                     card.style.display = 'block';
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+            
+            console.log('Visible videos:', visibleCount);
+            
+            // Show message if no videos match
+            const emptyState = document.querySelector('.empty-state');
+            if (visibleCount === 0 && videoCards.length > 0) {
+                if (!document.getElementById('noResultsMessage')) {
+                    const noResults = document.createElement('div');
+                    noResults.id = 'noResultsMessage';
+                    noResults.className = 'empty-state';
+                    noResults.innerHTML = `
+                        <i class="fas fa-search"></i>
+                        <h3>No Videos Found</h3>
+                        <p>No videos match your filter criteria. Try a different category or search term.</p>
+                    `;
+                    document.getElementById('videosGrid').after(noResults);
+                }
+            } else {
+                const noResults = document.getElementById('noResultsMessage');
+                if (noResults) {
+                    noResults.remove();
+                }
+            }
         }
 
         // Search functionality
@@ -674,6 +711,9 @@
                     playVideo(playButton);
                 }
             }
+            
+            // Initialize filter
+            filterVideos();
         });
     </script>
 </body>

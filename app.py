@@ -23,6 +23,8 @@ from itsdangerous import URLSafeTimedSerializer
 app = Flask(__name__)
 
 # --- File upload settings ---
+#Get the Render URL from environment or use the actual URL
+app.config['BASE_URL'] = os.environ.get('BASE_URL', 'https://tusome-guhv.onrender.com')
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = {
     'pdf', 'docx', 'txt', 'png', 'jpg', 'jpeg', 'mp4', 'zip'
